@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <title>UvA Mindmap</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="assets/js/mindmap.js"></script>
+    <link href="assets/style/mindmap.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
+    <!-- admin code -->
+    <!-- <link href="assets/style/admin.css" rel="stylesheet">
+    <script src="assets/js/admin.js"></script> -->
+  <head>
+  <body>
+    <div id="view">
+      <div id="mindmap">
+        <ol id="leftbranch" class="children children_leftbranch">
+        </ol>
+        <div class="node node_root">
+          <div class="textbubble">
+            <span>
+              Kies je studie en jaarlaag:
+
+              <select id="studySelect">
+                <option value="" disabled selected>Selecteer je studie</option>
+              </select>
+
+              <select id="yearSelect" disabled>
+                <option value="" disabled selected>Selecteer je jaarlaag</option>
+              </select>
+
+              <button id="loadMindmapButton" disabled>OK</button>
+            </span>
+          </div>
+          <img class="startscreen" src="assets/images/root.png">
+          <button id="reset_button" style="display:none">Reset&nbsp;&nbsp;<i class="fas fa-undo"></i></button>
+        </div>
+        <ol id="rightbranch" class="children children_rightbranch">
+        </ol>
+      </div>
+      <button id="center_button" style="display:none">Centreren&nbsp;&nbsp;<i class="fas fa-arrows-alt"></i></button>
+    </div>
+    <div id="footer">
+      <h3>UvA Mindmap</h3><br>
+      <h4>&copy; 2018 Universiteit van Amsterdam | <a href="#" id="privacy_button">Privacy</a></h4>
+    </div>
+    <div id="privacy_policy">
+      <h2>Privacy Policy</h2>
+      <span>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <button id="accept_button">OK&nbsp;&nbsp;<i class="fas fa-check"></i></button>
+        <div class="bottom_text_fade"></div>
+      </span>
+    </div>
+    <div id="overlay"></div>
+    <div id="hint">
+      <i class="fas fa-info-circle"></i>&nbsp;<span>Tip: Gebruik je muis om de mindmap te verslepen.</span>
+    </div>
+  </body>
+</html>
