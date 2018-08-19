@@ -123,7 +123,8 @@ input {
     color: #6b2565;
     margin-top: 10px;
     width: 70%;
-    transition: background-color .2s ease-in-out; }
+    transition: background-color .2s ease-in-out;
+    border: 1px solid #e7e9ec; }
     #view button:hover:enabled {
       cursor: pointer;
       background-color: #f5f6f7; }
@@ -131,15 +132,11 @@ input {
       opacity: .8; }
   #view #center_button {
     position: fixed;
-    bottom: 3px;
+    bottom: calc(3em + 11px);
     height: 18px;
     width: 150px;
     left: calc(50% - 75px);
-    color: white;
-    background-color: #6b2565; }
-    #view #center_button:hover {
-      background-color: #f5f6f7;
-      color: #6b2565; }
+    margin: 0; }
 
 #mindmap {
   position: absolute;
@@ -245,9 +242,7 @@ input {
       bottom: 30vh;
       left: 50%;
       transform: translate(-50%, -50%);
-      padding: 5px;
-      max-width: 50%;
-      border: 1px solid #e7e9ec; }
+      max-width: 50%; }
       @media screen and (max-height: 1000px) {
         #mindmap .node_root #reset_button {
           bottom: 25vh; } }
@@ -498,7 +493,8 @@ input {
   bottom: 4em;
   font-size: .5em;
   padding: 1em;
-  line-height: .1em; }
+  line-height: .1em;
+  height: 40px; }
   @media screen and (max-height: 700px) {
     #footer {
       bottom: 2.5em;

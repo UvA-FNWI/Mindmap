@@ -192,6 +192,7 @@ input {
     margin-top: 10px;
     width: 70%;
     transition: background-color .2s ease-in-out;
+    border: 1px solid darken(rgb(245, 246, 247), 5);
 
     &:hover:enabled {
       cursor: pointer;
@@ -205,18 +206,11 @@ input {
 
   #center_button {
     position: fixed;
-    bottom: 3px;
+    bottom: calc(3em + 11px);
     height: 18px;
     width: 150px;
     left: calc(50% - 75px);
-    color: white;
-    background-color: rgb(107, 37, 101);
-
-
-    &:hover {
-      background-color: rgb(245, 246, 247);
-      color: rgb(107, 37, 101);
-    }
+    margin: 0;
   }
 }
 
@@ -356,9 +350,7 @@ input {
       bottom: 30vh;
       left: 50%;
       transform: translate(-50%, -50%);
-      padding: 5px;
       max-width: 50%;
-      border: 1px solid darken(rgb(245, 246, 247), 5);
 
       @media screen and (max-height: $DESKTOP_HEIGHT_MAX) {
         bottom: 25vh;
@@ -721,6 +713,7 @@ input {
   font-size: .5em;
   padding: 1em;
   line-height: .1em;
+  height: 40px;
 
   @media screen and (max-height: $MOBILE_HEIGHT_MAX) {
     bottom: 2.5em;
