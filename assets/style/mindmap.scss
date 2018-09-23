@@ -25,11 +25,14 @@ input {
   vertical-align: middle;
   text-align: left;
 
-  .children__item {
+  .children_item {
     position: relative;
     padding: 0 0 0 1vw;
     border-left: 4px solid grey;
-    cursor: default;
+    cursor: move;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
 
     &:before {
       position: absolute;
@@ -59,9 +62,15 @@ input {
       }
     }
 
+    &:only-child {
+      &:before {
+        border-left: none;
+        border-right: none;
+      }
+    }
+
     &:first-child, &:last-child {
       border-left: 1px solid transparent !important;
-
     }
   }
 }
@@ -72,12 +81,15 @@ input {
 
   .fa-chevron-dynamic:before {
     content: "\f053";
+    display: block;
+    margin-top: 1px;
+    margin-right: 1px;
   }
-  .children__item {
+  .children_item {
     padding: 0 10px 0 0;
     border: 0;
     border-right: 4px solid grey;
-    margin-right: 40px;
+    margin-right: calc(1vw + 1em + 8px);
 
     &:first-child {
       &:before {
@@ -110,6 +122,13 @@ input {
       right: 0;
       left: auto;
     }
+
+    &:only-child {
+      &:before {
+        border-left: none;
+        border-right: none;
+      }
+    }
   }
 
   .children {
@@ -118,11 +137,11 @@ input {
       left: auto;
     }
   }
-  .node__expand {
-    right: calc(100% + 28px);
+  .node_expand {
+    right: calc(100% + 1vw + 1em);
 
     .pipe {
-      right: -26px;
+      right: calc(-1vw - 1em);
     }
 
     &.active {
@@ -139,18 +158,21 @@ input {
 .children_rightbranch {
   .fa-chevron-dynamic:before {
     content: "\f054";
+    display: block;
+    margin-top: 1px;
+    margin-left: 1px;
   }
 
   .children {
-    .children__item {
+    .children_item {
       margin-left: 11px;
     }
   }
-  .node__expand {
-    left: calc(100% + 33px);
+  .node_expand {
+    left: calc(100% + 1vw + 1em + 2px);
 
     .pipe {
-      left: -32px;
+      left: calc(-1vw - 1em - 2px);
     }
 
     &.active {
@@ -493,7 +515,7 @@ input {
 
   }
 
-  .node__expand {
+  .node_expand {
     display: block;
     position: absolute;
     top: calc(50% - 12px);
@@ -510,7 +532,7 @@ input {
       position: absolute;
       height: 4px;
       top: calc(50% - 2px);
-      width: 40px;
+      width: calc(1em + 1vw + 12px);
       background-color: inherit;
       z-index: -1;
     }

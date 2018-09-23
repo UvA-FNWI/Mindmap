@@ -1,9 +1,18 @@
+// SET THIS TO THE ENDPOINT THAT PROVIDES THE MINDMAP-DATA.
+var DATA_ENDPOINT = "data/content.json"
+
 /*
  * Used to store the JSON, the calculated width and height of nodes
  * and to block any mouse-actions while the privacy-popup is open.
  */
 var jsondata, nodewidth, nodeheight;
 var mousedisabled = false;
+
+/*
+ * Toggle for editor-mode.
+ * Gets overriden by the editor script.
+ */
+var editormode = false;
 
 $(function(){
   bindPanHandler();
@@ -17,36 +26,60 @@ $(function(){
  * has selected a study and year.
  */
 function initialize() {
-  $.getJSON("data/content.json", function(json){
+  $.getJSON(DATA_ENDPOINT + "?" + Math.floor(Math.random() * 1000000), function(json){
     jsondata = json;
     var studies = Object.keys(jsondata.content);
+    var sortedStudies = studies.concat().sort(function(a, b){
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+    });
 
     var studySelect = $("#studySelect");
     var yearSelect = $("#yearSelect");
 
-    $.each(studies, function(index, value) {
-      studySelect[0].add(new Option(value, index))
+    $.each(sortedStudies, function(index, value) {
+      studySelect[0].add(new Option(value, studies.indexOf(value)));
     });
+    if (editormode) {
+      studySelect[0].add(new Option("Studie toevoegen...", "new"));
+      yearSelect[0].add(new Option("Nieuw studiejaar...", "new"));
+      yearSelect.prop("disabled", false);
+    }
 
     // Picks the right year-options when a different study has been selected.
     studySelect.change(function() {
-      var yearOptions = Object.keys(jsondata.content[studies[this.value]]);
-
-      if (yearOptions.length > 0) {
-        yearSelect.prop("disabled", false);
+      if (this.value == "new") {
+        addNewStudy();
       } else {
-        yearSelect.prop("disabled", true);
-      }
+        var yearOptions = Object.keys(jsondata.content[studies[this.value]]);
+        var sortedYearOptions = yearOptions.concat().sort(function(a, b){
+            if (a < b) return -1;
+            if (a > b) return 1;
+            return 0;
+        });
 
-      yearSelect.find("option").not(':first').remove();
-      $.each(yearOptions, function(index, value) {
-        yearSelect[0].add(new Option(value, index));
-      })
-      yearSelect.val("");
+        if (yearOptions.length > 0) {
+          yearSelect.prop("disabled", false);
+        } else {
+          yearSelect.prop("disabled", true);
+        }
+
+        yearSelect.find("option").not(':first').remove();
+        $.each(sortedYearOptions, function(index, value) {
+          yearSelect[0].add(new Option(value, yearOptions.indexOf(value)));
+        })
+        if (editormode) {
+          yearSelect[0].add(new Option("Nieuw studiejaar...", "new"));
+        }
+        yearSelect.val("");
+      }
     });
 
     yearSelect.change(function() {
-      if (this.value != "") {
+      if (this.value == "new") {
+        addNewYear();
+      } else if (this.value != "") {
         $("#loadMindmapButton").prop("disabled", false);
       } else {
         $("#loadMindmapButton").prop("disabled", true);
@@ -94,7 +127,7 @@ function bindPanHandler() {
 
   $(document).mousedown(function(e) {
     var target = $(e.target);
-    if (!mousedisabled && target.context.type != "select-one" && target.context.type != "submit") {
+    if (!mousedisabled && (target[0].id == "mindmap") || target[0].id == "view" || target.hasClass("node_root") || target.hasClass("children_item")) {
       e.preventDefault();
       previousX = e.clientX;
       previousY = e.clientY;
@@ -129,14 +162,14 @@ function bindPanHandler() {
  */
 function bindButtonClickHandlers() {
   $("#reset_button").click(function() {
-    var initialNodes = $(".children_leftbranch, .children_rightbranch").children(".children__item");
+    var initialNodes = $(".children_leftbranch, .children_rightbranch").children(".children_item");
 
     // Remove all subtrees.
     $.each(initialNodes, function(index, node) {
       $(node).find(".children.nested").first().animate({opacity: 0}, {duration: 500, queue: false, complete: function() {
         $(this).html("").css("opacity", 1);
       }});
-      $(node).find(".node__expand.active").removeClass("active");
+      $(node).find(".node_expand.active").removeClass("active");
     });
 
     // Uncheck all checkboxes and close the checklists.
@@ -179,8 +212,33 @@ function bindButtonClickHandlers() {
  */
 function loadMindmap(study, year) {
   var studies = Object.keys(jsondata.content);
+
+  if (editormode) {
+    // Newly created study, needs to be created first.
+    if (isNaN(study)) {
+      jsondata.content[study] = {};
+      studies.push(study);
+      study = studies.length - 1;
+    }
+  }
+
   var studyObject = jsondata.content[studies[study]];
   var years = Object.keys(studyObject);
+
+  if (editormode) {
+    // Newly created year, also needs to be created first.
+    if (isNaN(year)) {
+      jsondata.content[studies[study]][year] = {
+        textbubble: {
+          welcomeMessage: "Welkom!",
+          resetMessage: "Reset!"
+        }
+      };
+      years.push(year);
+      year = years.length - 1;
+    }
+  }
+
   var data = studyObject[years[year]];
 
   $("#reset_button").data("message", data["textbubble"]["resetMessage"]);
@@ -204,8 +262,8 @@ function loadMindmap(study, year) {
     }
   });
 
-  nodewidth = $(".node.checklist").first().outerWidth();
-  nodeheight = $(".node.checklist").first().outerHeight();
+  nodewidth = $(".node").first().outerWidth() || 250;
+  nodeheight = $(".node").first().outerHeight() || 50;
 
   $(leftBranch, rightBranch).fadeIn({duration: 500, queue: false});
   $("#reset_button").fadeIn({duration: 500, queue: false});
@@ -214,6 +272,15 @@ function loadMindmap(study, year) {
   setTimeout(function() {
     $("#hint").fadeIn(350).delay(7000).fadeOut(350);
   }, 2500);
+
+  // Store some more data used for the editor.
+  if (editormode) {
+    $(".node_root").data("globalproperties", {
+      textbubble: data["textbubble"],
+      year: years[year],
+      study: studies[study]
+    })
+  }
 }
 
 /*
@@ -240,18 +307,25 @@ function replaceBubble(newHTML) {
 function nodeBuilder(node) {
   switch (node.type) {
     case "checklist":
-      return nodeChecklistBuilder(node);
+      var createdNode = nodeChecklistBuilder(node);
       break;
     case "text":
-      return nodeTextBuilder(node);
+      var createdNode = nodeTextBuilder(node);
       break;
     case "youtube":
-      return nodeYoutubeBuilder(node);
+      var createdNode = nodeYoutubeBuilder(node);
       break;
     default:
       console.error("Unsupported node type!");
       return
   }
+
+  $(createdNode).children(".node").data("properties", node);
+
+  if (editormode) {
+    $(createdNode).children(".node").addClass("editor_editable");
+  }
+  return createdNode;
 }
 
 /*
@@ -260,51 +334,44 @@ function nodeBuilder(node) {
 var counter = 0;
 
 function nodeBaseBuilder(nodeData) {
-  var nodeID = "node-" + counter;
-  counter++;
+  var nodeID = "node-" + counter++;
 
   // Base HTML structure.
-  var children__item = document.createElement("li");
+  var children_item = document.createElement("li");
   var node = document.createElement("div");
   var node__content = document.createElement("div");
   var node__text = document.createElement("div");
+  var node_name = document.createElement("span");
   var node__active_content = document.createElement("div");
   var children = document.createElement("ol");
-  $(children__item).addClass("children__item").attr("id", nodeID);
+  $(children_item).addClass("children_item").attr("id", nodeID);
   $(node).addClass("node").css("background-color", nodeData.color);
   $(node__content).addClass("node__content");
-  $(node__text).addClass("node__text").text(nodeData.name);
+  $(node_name).addClass("node_name").html(nodeData.name);
+  $(node__text).addClass("node__text").append(node_name);
   $(node__active_content).addClass("node__active_content");
   $(children).addClass("children nested");
 
   // Add the expand-arrow if this node has any children.
   if (nodeData.children && nodeData.children.length > 0) {
-    var node__expand = document.createElement("div");
+    var node_expand = document.createElement("div");
     var chevron = document.createElement("i");
     var pipe = document.createElement("div");
-    $(node__expand).addClass("node__expand").css("background-color", nodeData.color);
+    $(node_expand).addClass("node_expand").css("background-color", nodeData.color);
     $(chevron).addClass("fa fa-chevron-dynamic");
     $(pipe).addClass("pipe");
-
-    // Bind the children data to the DOM object.
-    $(node__expand).data("children", nodeData.children);
-
-    $(node__expand).append(chevron).append(pipe);
-    bindBaseNodeExpansionHandler(node__expand);
-    $(node).prepend(node__expand);
+    $(node_expand).append(chevron).append(pipe);
+    $(node).prepend(node_expand);
+    bindBaseNodeExpansionHandler(node);
   }
 
   // Style the lines to the node.
   if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
     // Firefox works slightly different.
-    document.styleSheets[0].insertRule("#" + nodeID + ".children__item, #" + nodeID + ".children__item:before { border-color: " + nodeData.color + "}");
+    document.styleSheets[0].insertRule("#" + nodeID + ".children_item, #" + nodeID + ".children_item:before { border-color: " + nodeData.color + "}");
   } else {
-    document.styleSheets[0].addRule("#" + nodeID + ".children__item, #" + nodeID + ".children__item:before", "border-color: " + nodeData.color);
+    document.styleSheets[0].addRule("#" + nodeID + ".children_item, #" + nodeID + ".children_item:before", "border-color: " + nodeData.color);
   }
-
-  // Store the click-messages on the node.
-  $(node__content).attr("data-click-open-message", nodeData.openMessage);
-  $(node__content).attr("data-click-close-message", nodeData.closeMessage);
 
   // Close/open arrow.
   var node__arrow = document.createElement("div");
@@ -319,7 +386,7 @@ function nodeBaseBuilder(nodeData) {
   $(node__text).append(node__active_content);
   $(node__content).append(node__text);
   $(node).append(node__content);
-  return $(children__item).append(node).append(children);
+  return $(children_item).append(node).append(children);
 }
 
 /*
@@ -327,6 +394,11 @@ function nodeBaseBuilder(nodeData) {
  * to expand and contract.
  */
 function bindBaseNodeClickHandler(node) {
+  if (editormode) {
+    $(node).click(function(e) {
+      loadObjectClickHandler(e, $(this).parent());
+    });
+  }
   $(node).click(function(e) {
     if (e.target.className == "" || $(e.target).hasClass("container") || $(e.target).hasClass("checkmark")) {
       return;
@@ -337,8 +409,8 @@ function bindBaseNodeClickHandler(node) {
       $(this).parent().data("original-size", 0);
 
       // If not blank, display the close-click message.
-      if ($(node).attr("data-click-close-message") && $(node).attr("data-click-close-message") != "") {
-        replaceBubble($(node).attr("data-click-close-message"));
+      if ($(node).parent().data("properties") && $(node).parent().data("properties")["closeMessage"] != "") {
+        replaceBubble($(node).parent().data("properties")["closeMessage"]);
       }
     } else {
       var originalHeight = 0;
@@ -347,10 +419,9 @@ function bindBaseNodeClickHandler(node) {
         return height + $(this).find(".node__active_content").outerHeight();
       });
       $(this).parent().data("original-size", originalHeight);
-
       // If not blank, display the open-click message.
-      if ($(node).attr("data-click-open-message") && $(node).attr("data-click-open-message") != "") {
-        replaceBubble($(node).attr("data-click-open-message"));
+      if ($(node).parent().data("properties") && $(node).parent().data("properties")["openMessage"] != "") {
+        replaceBubble($(node).parent().data("properties")["openMessage"]);
       }
     }
   });
@@ -361,12 +432,12 @@ function bindBaseNodeClickHandler(node) {
  * opening and closing of subtrees.
  */
 function bindBaseNodeExpansionHandler(node) {
-  $(node).click(function(e) {
+  $(node).find(".node_expand").click(function(e) {
     $(this).toggleClass("active");
 
-    var container = $(this).parent().parent().find(".children.nested");
+    var container = $(this).parent().parent().find(".children.nested").first();
     if ($(this).hasClass("active")) {
-      $.each($(node).data("children"), function(index, child) {
+      $.each($(node).data("properties").children, function(index, child) {
         var childNode = nodeBuilder(child);
         $(childNode).css("width", 0);
         $(childNode).find(".node").css("height", 0);
@@ -374,21 +445,20 @@ function bindBaseNodeExpansionHandler(node) {
       });
       var moveX = ($(document).width() / 2 - nodewidth / 2) - $(container).offset().left;
       $(container).find(".node").animate({height: nodeheight}, {duration: 450, queue: false});
-      $(container).find("li.children__item").animate({width: nodewidth}, {duration: 450, queue: false});
+      $(container).find("li.children_item").animate({width: nodewidth}, {duration: 450, queue: false});
       $("#mindmap").animate({left: $("#mindmap").position().left + moveX}, {duration: 450, queue: false});
     } else {
       var moveX = ($(document).width() / 2 - nodewidth / 2) - $($(container).parent()[0]).offset().left;
       $(container).find(".node").animate({height: 0}, {duration: 450, queue: false, complete: function() {
-        $(container).find("li.children__item").animate({width: 0}, {duration: 450, queue: false, complete: function() {
+        $(container).find("li.children_item").animate({width: 0}, {duration: 250, queue: false, complete: function() {
           $(this).remove();
+          if ($("#mindmap").find(".node_expand.active").length > 0) {
+            $("#mindmap").animate({left: $("#mindmap").position().left + moveX}, {duration: 450, queue: false});
+          } else {
+            centerView();
+          }
         }});
       }});
-
-      if ($("#mindmap").find(".node__expand.active").length > 0) {
-        $("#mindmap").animate({left: $("#mindmap").position().left + moveX}, {duration: 450, queue: false});
-      } else {
-        centerView();
-      }
     }
   })
 }
@@ -424,7 +494,7 @@ function nodeChecklistBuilder(nodeData) {
     var checkbox = document.createElement("input");
     var checkmark = document.createElement("div");
 
-    $(label).addClass("container").text(content);
+    $(label).addClass("container").html(content);
     $(checkbox).attr("type", "checkbox");
     $(checkmark).addClass("checkmark").addClass(checklistID);
 
@@ -444,7 +514,7 @@ function nodeChecklistBuilder(nodeData) {
 function nodeTextBuilder(nodeData) {
   var textNode = nodeBaseBuilder(nodeData);
   $(textNode).find(".node").addClass("text");
-  $(textNode).find(".node__active_content").html(nodeData.data);
+  $(textNode).find(".node__active_content").html(nodeData.data[0]);
 
   return textNode;
 }
@@ -480,7 +550,7 @@ function nodeYoutubeBuilder(nodeData) {
 function bindChecklistHandlers(checklist) {
   $(checklist).find(".node__active_content :checkbox").change(function() {
     // Opens the subtree if not already opened.
-    $(this).closest(".node").find(".node__expand").not(".active").click();
+    $(this).closest(".node").find(".node_expand").not(".active").click();
 
     var nChecked = $(this).closest("ul").children("li")
                                         .children(".container")
@@ -509,7 +579,7 @@ function bindChecklistHandlers(checklist) {
  */
 function centerView() {
   $("#mindmap").animate({
-    left: ($(document).width() / 2 - $(".node_root").first().width()) - $(".node_root").first().position().left,
+    left:  $(document).width() / 2 - $(".node_root").first().width() - $(".node_root").first().position().left,
     top: 0
   }, 1000);
 }
