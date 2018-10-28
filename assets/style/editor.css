@@ -44,7 +44,8 @@
   width: 300px;
   box-sizing: border-box;
   background-color: #f5f6f7;
-  border-left: 1px solid #e7e9ec; }
+  border-left: 1px solid #e7e9ec;
+  overflow: scroll; }
   #editor_side_panel #editor_main_label {
     font-size: 1.7em;
     font-weight: bold;
@@ -60,13 +61,11 @@
     text-align: center; }
   #editor_side_panel .editor_button.save {
     -webkit-appearance: none;
-    position: absolute;
-    bottom: 3em;
     width: 200px;
     display: block;
     margin-left: calc(50% - 100px);
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 2em;
+    margin-bottom: 2em;
     border-radius: 3px;
     transition: background-color .2s ease-in-out;
     border: 1px solid #e7e9ec;

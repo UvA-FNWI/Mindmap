@@ -68,6 +68,7 @@ $MOBILE_WIDTH_MAX: 500px;
   box-sizing: border-box;
   background-color: rgb(245, 246, 247);
   border-left: 1px solid darken(rgb(245, 246, 247), 5);
+  overflow: scroll;
 
   #editor_main_label {
     font-size: 1.7em;
@@ -88,13 +89,11 @@ $MOBILE_WIDTH_MAX: 500px;
 
   .editor_button.save {
     -webkit-appearance: none;
-    position: absolute;
-    bottom: 3em;
     width: 200px;
     display: block;
     margin-left: calc(50% - 100px);
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 2em;
+    margin-bottom: 2em;
     border-radius: 3px;
     transition: background-color .2s ease-in-out;
     border: 1px solid #e7e9ec;
