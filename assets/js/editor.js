@@ -8,6 +8,7 @@ var SAVE_DATA_PATH = "/mindmap/save.php";
  */
 editormode = true;
 
+
 /*
  * Contains the interal property names of
  * all editable node-properties.
@@ -29,7 +30,9 @@ var INPUT_TYPES = {
   welcometext: "text",
   resettext: "text",
   study: "text",
-  year: "text"
+  year: "text",
+  clone: "button",
+  delete: "button"
 }
 
 /*
@@ -51,7 +54,9 @@ var NORMALIZED_PROPERTY_NAMES = {
   welcometext: "Welkomsttekst",
   resettext: "Resettekst",
   study: "Studie",
-  year: "Studiejaar"
+  year: "Studiejaar",
+  clone: "Kloon",
+  delete: "Verwijder"
 }
 
 // Initialize the editor.
@@ -246,7 +251,11 @@ var mindmapEditor = {
     saveButton.className = "editor_button save";
     saveButton.innerHTML = "Mindmap opslaan&nbsp;&nbsp;<i class='fas fa-save'></i>";
     saveButton.onclick = function(e) {
-      mindmapEditor.saveMindmap();
+      var oldStudy = $(".node_root").data("globalproperties").study;
+      var oldYear = $(".node_root").data("globalproperties").year;
+      var newStudy = $(".node_root").data("globalproperties").new_study;
+      var newYear = $(".node_root").data("globalproperties").new_year;
+      mindmapEditor.saveMindmap(oldStudy, oldYear, newStudy, newYear);
     }
     adminSidePanel.appendChild(saveButton);
 
@@ -284,6 +293,16 @@ var mindmapEditor = {
       mindmapEditor.createEditorEntry(object, "year", data.year);
       mindmapEditor.createEditorEntry(object, "welcometext", data.textbubble.welcomeMessage);
       mindmapEditor.createEditorEntry(object, "resettext", data.textbubble.resetMessage);
+      mindmapEditor.createEditorEntry(object, "clone", "Kloon deze map");
+      mindmapEditor.createEditorEntry(object, "delete", "Verwijder deze map");
+
+      $("#clone-button").click(function() {
+        mindmapEditor.cloneMindmap();
+      });
+
+      $("#delete-button").click(function() {
+        mindmapEditor.deleteMindmap();
+      });
     }
 
     /*
@@ -406,7 +425,14 @@ var mindmapEditor = {
    * pair of the given object.
    */
   createEditorEntry: function(object, key, value) {
-    if (INPUT_TYPES[key] != "varying") {
+    if (INPUT_TYPES[key] == "button") {
+      var inputButton = document.createElement("input");
+      inputButton.type = "button";
+      inputButton.value = value;
+      inputButton.id = key + "-button";
+      mindmapFormHelper.createRow(NORMALIZED_PROPERTY_NAMES[key], inputButton);
+
+    } else if (INPUT_TYPES[key] != "varying") {
       var inputField = mindmapFormHelper.createInputField(key, value);
       $(inputField).data("property", key);
       if (key == "type") {
@@ -701,13 +727,45 @@ var mindmapEditor = {
 
   /*
    * Removes a specific study/year combination from the json-data.
+   * Automatically removes a study if all years of that study have
+   * been removed.
    */
   removeEntry: function(study, year) {
-    delete jsondata.content[study][year];
+    if (jsondata.content[study] && jsondata.content[study][year]) {
+      delete jsondata.content[study][year];
+    }
 
     // Delete the study if no year is left.
-    if (Object.keys(jsondata.content[study]).length == 0) {
+    if (jsondata.content[study] && Object.keys(jsondata.content[study]).length == 0) {
       delete jsondata.content[study];
+    }
+  },
+
+  /*
+   * Clones the curent minmap to a different year and study combination.
+   */
+  cloneMindmap: function() {
+    var study = window.prompt("Naar welke studie moet deze map gekloond worden? (Let op: dit is hoofdletter- en spatiegevoelig)");
+    var year = window.prompt("Naar welk studiejaar moet deze map gekloond worden? (Let op: ook dit is hoofdletter- en spatiegevoelig)")
+    if (window.confirm("Deze map clonen naar de studie '" + study + "' voor studiejaar '" + year + "'?")) {
+      this.saveMindmap(study, year, study, year);
+    }
+  },
+
+  /*
+   * Deletes the current mindmap.
+   * Will automatically remove the study if all years of the study have been removed.
+   */
+  deleteMindmap: function() {
+    var study = $(".node_root").data("globalproperties").study;
+    var year = $(".node_root").data("globalproperties").year;
+    if (window.confirm("Weet je zeker dat je studiejaar '" + year + "' voor studie '" + study + "' wilt verwijderen? Dit kan niet ongedaan gemaakt worden.")) {
+      
+      // Remove the data.
+      this.removeEntry(study, year);
+
+      // And save.
+      this.sendUpdatedMindmapToServer("Mindmap verwijderd! Herlaad de pagina of selecteer een ander studie(jaar) om mee verder te werken.");
     }
   },
 
@@ -715,13 +773,7 @@ var mindmapEditor = {
    * Constructs the new mindmap-object for the selected course
    * that can be saved on the server.
    */
-  saveMindmap: function() {
-
-    var oldStudy = $(".node_root").data("globalproperties").study;
-    var oldYear = $(".node_root").data("globalproperties").year;
-    var newStudy = $(".node_root").data("globalproperties").new_study;
-    var newYear = $(".node_root").data("globalproperties").new_year;
-
+  saveMindmap: function(oldStudy, oldYear, newStudy, newYear) {
     var newMindMap = {};
 
     // Global settings.
@@ -739,7 +791,7 @@ var mindmapEditor = {
     });
 
     // Deal with the possible renaming of the study.
-    if (typeof newStudy != "undefined") {
+    if (typeof newStudy != "undefined" && oldStudy != newStudy) {
       jsondata.content[newStudy] = jsondata.content[oldStudy];
       delete jsondata.content[oldStudy];
     }
@@ -748,7 +800,9 @@ var mindmapEditor = {
     var year = newYear || oldYear;
 
     // Renaming or not, it's safe to just delete the year anyway.
-    this.removeEntry(study, oldYear);
+    if (study && oldYear) {
+      this.removeEntry(study, oldYear);
+    }
 
     // Save the new mindmap to the object.
     if (typeof jsondata.content[study] == "undefined") {
@@ -757,12 +811,21 @@ var mindmapEditor = {
     jsondata.content[study][year] = newMindMap;
 
     // And finally post the new mindmap to the server.
+    this.sendUpdatedMindmapToServer("Mindmap opgeslagen!");
+  },
+
+
+  /* 
+   * Sends the updated mindmap back to the server
+   * so it can be saved.
+   */
+  sendUpdatedMindmapToServer: function(successMessage) {
     $.ajax({
       type: "POST",
       url: SAVE_DATA_PATH,
       data: {data: JSON.stringify(jsondata)},
       success: function (data) {
-        alert("Mindmap opgeslagen!");
+        alert(successMessage);
       },
       error: function (data) {
         console.error("error", data);

@@ -14,7 +14,7 @@ var mousedisabled = false;
  */
 var editormode = false;
 
-$(function(){
+$(document).ready(function() {
   bindPanHandler();
   bindButtonClickHandlers();
   initialize();
