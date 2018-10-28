@@ -523,24 +523,30 @@ function nodeTextBuilder(nodeData) {
  * Builds the HTML for a youtube-based node.
  */
 function nodeYoutubeBuilder(nodeData) {
-  var youtubeNode = nodeBaseBuilder(nodeData);
-  $(youtubeNode).find(".node").addClass("youtube");
+
+  var videoNode = nodeBaseBuilder(nodeData);
+  $(videoNode).find(".node").addClass("youtube");
 
   // If text is given, add the text to the node.
   if (nodeData.data[1] && nodeData.data[1].length > 0) {
     var text = document.createElement("div");
     $(text).html(nodeData.data[1]);
     $(text).addClass("text");
-    $(youtubeNode).find(".node__active_content").append(text);
+    $(videoNode).find(".node__active_content").append(text);
   }
 
-  var youtube = document.createElement("iframe");
-  $(youtube).attr("frameborder", "0");
-  $(youtube).attr("allowfullscreen", "");
-  $(youtube).attr("src", "https://www.youtube.com/embed/" + nodeData.data[0]);
-  $(youtubeNode).find(".node__active_content").append(youtube);
+  var video = document.createElement("iframe");
+  $(video).attr("frameborder", "0");
+  $(video).attr("allowfullscreen", "");
+  $(videoNode).find(".node__active_content").append(video);
 
-  return youtubeNode;
+  if (nodeData.data[2] && nodeData.data[2] == "gdrive") {
+    $(video).attr("src", "https://drive.google.com/file/d/" + nodeData.data[0] + "/preview");
+  } else {
+    $(video).attr("src", "https://www.youtube.com/embed/" + nodeData.data[0]);
+  }
+
+  return videoNode;
 }
 
 /*

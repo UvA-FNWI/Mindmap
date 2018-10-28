@@ -548,11 +548,23 @@ var mindmapEditor = {
         $(object).data("properties")["data"][0] = newText;
         break;
       case "youtube":
-        var youtubeURL = $("#editor_form").find(".editor_node_youtube").first().val();
-        var youtubeIDRegex = /(youtube\.com\/watch\?v=|youtu\.be\/)(.*?)($|\?)/gi;
-        var youtubeID = youtubeIDRegex.exec(youtubeURL)[2];
+        var url = $("#editor_form").find(".editor_node_youtube").first().val();
+
+        /*
+         * Switch between Youtube and Google Drive-videos.
+         */
+        if (url.includes("youtube.com")) {
+          var youtubeIDRegex = /(youtube\.com\/watch\?v=|youtu\.be\/)(.*?)($|\?)/gi;
+          var detectedID = youtubeIDRegex.exec(url)[2];
+          var type = "youtube";
+        } else if (url.includes("drive.google.com")) {
+          var googleDriveIDRegex = /drive\.google\.com\/file\/d\/(.*)\/view($|\?)/gi;
+          var detectedID = googleDriveIDRegex.exec(url)[1];
+          var type = "gdrive";
+        }
+
         var newText = $("#editor_form").find(".editor_node_text").first().val();
-        $(object).data("properties")["data"] = [youtubeID, newText];
+        $(object).data("properties")["data"] = [detectedID, newText, type];
         break;
       case "checklist":
         var data = {};
@@ -665,15 +677,22 @@ var mindmapEditor = {
 
         var textRow = mindmapFormHelper.createRow("Tekst", textInputField);
 
-        var youtubeInputField = document.createElement("input");
+        var videoInputField = document.createElement("input");
         var youtubePreviewImg = document.createElement("img");
-        youtubeInputField.type = "text";
-        youtubeInputField.value = (data[0]) ? "https://www.youtube.com/watch?v=" + data[0] : "";
-        $(youtubeInputField).data("property", "data").addClass("editor_node_youtube");
-        if (data[0]) {
-          youtubePreviewImg.src = "https://i.ytimg.com/vi/" + data[0] + "/hqdefault.jpg"
+        videoInputField.type = "text";
+
+        if (data[2] && data[2] == "gdrive") {
+          videoInputField.value = (data[0]) ? "https://drive.google.com/file/d/" + data[0] + "/view" : "";
+        } else {
+          // Assume its youtube.
+          if (data[0]) {
+            youtubePreviewImg.src = "https://i.ytimg.com/vi/" + data[0] + "/hqdefault.jpg"
+          }
+          videoInputField.value = (data[0]) ? "https://www.youtube.com/watch?v=" + data[0] : "";
         }
-        var youtubeRow = mindmapFormHelper.createRow("Youtube Link", [youtubeInputField, youtubePreviewImg]);
+
+        $(videoInputField).data("property", "data").addClass("editor_node_youtube");
+        var youtubeRow = mindmapFormHelper.createRow("Video Link", [videoInputField, youtubePreviewImg]);
 
         return [textRow, youtubeRow];
         break;
