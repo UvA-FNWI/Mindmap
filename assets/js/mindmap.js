@@ -432,7 +432,7 @@ function bindBaseNodeClickHandler(node) {
  * opening and closing of subtrees.
  */
 function bindBaseNodeExpansionHandler(node) {
-  $(node).find(".node_expand").click(function(e) {
+  $(node).find(".node_expand").click(function(e, scrollMode) {
     $(this).toggleClass("active");
 
     var container = $(this).parent().parent().find(".children.nested").first();
@@ -443,10 +443,14 @@ function bindBaseNodeExpansionHandler(node) {
         $(childNode).find(".node").css("height", 0);
         $(container).append(childNode);
       });
-      var moveX = ($(document).width() / 2 - nodewidth / 2) - $(container).offset().left;
+
       $(container).find(".node").animate({height: nodeheight}, {duration: 450, queue: false});
       $(container).find("li.children_item").animate({width: nodewidth}, {duration: 450, queue: false});
-      $("#mindmap").animate({left: $("#mindmap").position().left + moveX}, {duration: 450, queue: false});
+
+      if (scrollMode != "noScroll") {
+        var moveX = ($(document).width() / 2 - nodewidth / 2) - $(container).offset().left;
+        $("#mindmap").animate({left: $("#mindmap").position().left + moveX}, {duration: 450, queue: false});
+      }
     } else {
       var moveX = ($(document).width() / 2 - nodewidth / 2) - $($(container).parent()[0]).offset().left;
       $(container).find(".node").animate({height: 0}, {duration: 450, queue: false, complete: function() {
@@ -555,9 +559,6 @@ function nodeYoutubeBuilder(nodeData) {
  */
 function bindChecklistHandlers(checklist) {
   $(checklist).find(".node__active_content :checkbox").change(function() {
-    // Opens the subtree if not already opened.
-    $(this).closest(".node").find(".node_expand").not(".active").click();
-
     var nChecked = $(this).closest("ul").children("li")
                                         .children(".container")
                                         .children("input[type='checkbox']:checked")
@@ -565,6 +566,11 @@ function bindChecklistHandlers(checklist) {
     var nTotal = $(this).closest("ul").children("li").length;
     var percentage = nChecked / nTotal * 100;
     $(this).closest(".node").find(".bar").width(percentage + "%");
+
+    // Opens the subtree if not already opened, but only when 2 or more theorems are checked.
+    if (nChecked >= 2) {
+      $(this).closest(".node").find(".node_expand").not(".active").trigger("click", ["noScroll"]);
+    }
 
     var message = "";
     $.each($(checklist).data("feedback"), function (trigger, feedback) {
@@ -574,7 +580,11 @@ function bindChecklistHandlers(checklist) {
         return;
       }
     });
-    if (message.length > 0 && $(".textbubble").find("span").text() != message) {
+
+    var oldMessage = $(".textbubble").find("span")[0].innerHTML.replace(/\s/g,'');
+    var newMessage = message.replace(/\s/g,'');
+
+    if (message.length > 0 && oldMessage != newMessage) {
       replaceBubble(message);
     }
   });
