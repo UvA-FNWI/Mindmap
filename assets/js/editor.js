@@ -13,7 +13,7 @@ editormode = true;
  * Contains the interal property names of
  * all editable node-properties.
  */
-var EDITABLE_PROPERTIES = ["name", "color", "openMessage", "closeMessage", "type", "data"];
+var EDITABLE_PROPERTIES = ["name", "color", "openMessage", "closeMessage", "type", "data", "width"];
 
 /*
  * Contains the mapping of each standard
@@ -31,6 +31,7 @@ var INPUT_TYPES = {
   resettext: "text",
   study: "text",
   weight: "number",
+  width: "number",
   year: "text",
   clone: "button",
   delete: "button"
@@ -56,6 +57,7 @@ var NORMALIZED_PROPERTY_NAMES = {
   resettext: "Resettekst",
   study: "Studie",
   weight: "Gewicht studie",
+  width: "Node breedte in pixels",
   year: "Studiejaar",
   clone: "Kloon",
   delete: "Verwijder"
@@ -313,7 +315,7 @@ var mindmapEditor = {
       mindmapFormHelper.createSubsection("Studie instellingen");
       mindmapEditor.createEditorEntry(object, "study", data.study);
       mindmapEditor.createEditorEntry(object, "weight", data.weight);
-      mindmapFormHelper.createSubsection("Jaarlaag instellingen");
+      mindmapFormHelper.createSubsection("Studiejaar instellingen");
       mindmapEditor.createEditorEntry(object, "year", data.year);
       mindmapEditor.createEditorEntry(object, "welcometext", data.textbubble.welcomeMessage);
       mindmapEditor.createEditorEntry(object, "resettext", data.textbubble.resetMessage);
@@ -593,7 +595,6 @@ var mindmapEditor = {
       }
     }
   },
-
 
   /*
    * Updates the node data to reflect the changes made in the editor.

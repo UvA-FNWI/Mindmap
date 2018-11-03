@@ -325,6 +325,9 @@ function nodeBuilder(node) {
       return
   }
 
+  // Fallback for when no width is explicitly set.
+  node.width = node.width || 250;
+
   $(createdNode).children(".node").data("properties", node);
 
   if (editormode) {
@@ -356,6 +359,11 @@ function nodeBaseBuilder(nodeData) {
   $(node__text).addClass("node__text").append(node_name);
   $(node__active_content).addClass("node__active_content");
   $(children).addClass("children nested");
+
+  // Override the default width of 250px if width is specified.
+  if (nodeData.width) {
+    $(node).css("width", nodeData.width + "px");
+  }
 
   // Add the expand-arrow if this node has any children.
   if (nodeData.children && nodeData.children.length > 0) {
