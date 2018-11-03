@@ -122,6 +122,13 @@
       opacity: .9;
       font-weight: bold;
       text-align: right; }
+    #editor_side_panel #editor_form tr.subsection {
+      font-size: 1.3em; }
+      #editor_side_panel #editor_form tr.subsection td {
+        box-sizing: border-box;
+        padding-left: 25px;
+        text-align: left;
+        border: none; }
     #editor_side_panel #editor_form .editor_button {
       -webkit-appearance: none;
       width: 200px;

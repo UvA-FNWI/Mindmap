@@ -30,6 +30,7 @@ var INPUT_TYPES = {
   welcometext: "text",
   resettext: "text",
   study: "text",
+  weight: "number",
   year: "text",
   clone: "button",
   delete: "button"
@@ -54,6 +55,7 @@ var NORMALIZED_PROPERTY_NAMES = {
   welcometext: "Welkomsttekst",
   resettext: "Resettekst",
   study: "Studie",
+  weight: "Gewicht studie",
   year: "Studiejaar",
   clone: "Kloon",
   delete: "Verwijder"
@@ -104,6 +106,25 @@ var mindmapFormHelper = {
     if (inputField) {
       row.appendChild(inputField);
     }
+
+    $("#editor_form").append(row);
+    return this;
+  },
+
+  /*
+   * Creates a subsection to separate different
+   * sections within the editor sidepanel.
+   */
+  createSubsection: function(name) {
+    var row = document.createElement("tr");
+    row.className = "subsection"
+    var field = document.createElement("td");
+    field.colSpan = 2;
+
+    var text = document.createElement("h4");
+    text.innerHTML = name;
+    field.appendChild(text);
+    row.appendChild(field);
 
     $("#editor_form").append(row);
     return this;
@@ -289,7 +310,10 @@ var mindmapEditor = {
       })
     } else if (object.hasClass("node_root")) {
       var data = object.data("globalproperties");
+      mindmapFormHelper.createSubsection("Studie instellingen");
       mindmapEditor.createEditorEntry(object, "study", data.study);
+      mindmapEditor.createEditorEntry(object, "weight", data.weight);
+      mindmapFormHelper.createSubsection("Jaarlaag instellingen");
       mindmapEditor.createEditorEntry(object, "year", data.year);
       mindmapEditor.createEditorEntry(object, "welcometext", data.textbubble.welcomeMessage);
       mindmapEditor.createEditorEntry(object, "resettext", data.textbubble.resetMessage);
@@ -431,7 +455,12 @@ var mindmapEditor = {
       inputButton.value = value;
       inputButton.id = key + "-button";
       mindmapFormHelper.createRow(NORMALIZED_PROPERTY_NAMES[key], inputButton);
-
+    } else if (INPUT_TYPES[key] == "number") {
+      var numberField = document.createElement("input");
+      $(numberField).data("property", key);
+      numberField.type = "number";
+      numberField.value = value;
+      mindmapFormHelper.createRow(NORMALIZED_PROPERTY_NAMES[key], numberField);
     } else if (INPUT_TYPES[key] != "varying") {
       var inputField = mindmapFormHelper.createInputField(key, value);
       $(inputField).data("property", key);
@@ -479,6 +508,8 @@ var mindmapEditor = {
         $(".node_root").data("globalproperties").textbubble.resetMessage = value;
         $("#reset_button").data("message", value);
         break;
+      case "weight":
+        $(".node_root").data("globalproperties").weight = value;
       default:
         /*
          * Add "new_" to the key since we still need the old value to remove
@@ -760,7 +791,7 @@ var mindmapEditor = {
     var study = $(".node_root").data("globalproperties").study;
     var year = $(".node_root").data("globalproperties").year;
     if (window.confirm("Weet je zeker dat je studiejaar '" + year + "' voor studie '" + study + "' wilt verwijderen? Dit kan niet ongedaan gemaakt worden.")) {
-      
+
       // Remove the data.
       this.removeEntry(study, year);
 
@@ -809,13 +840,14 @@ var mindmapEditor = {
       jsondata.content[study] = {};
     }
     jsondata.content[study][year] = newMindMap;
+    jsondata.content[study].weight = $(".node_root").data("globalproperties").weight;
 
     // And finally post the new mindmap to the server.
     this.sendUpdatedMindmapToServer("Mindmap opgeslagen!");
   },
 
 
-  /* 
+  /*
    * Sends the updated mindmap back to the server
    * so it can be saved.
    */

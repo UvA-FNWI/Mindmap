@@ -29,17 +29,20 @@ function initialize() {
   $.getJSON(DATA_ENDPOINT + "?" + Math.floor(Math.random() * 1000000), function(json){
     jsondata = json;
     var studies = Object.keys(jsondata.content);
+
     var sortedStudies = studies.concat().sort(function(a, b){
-        if (a < b) return -1;
-        if (a > b) return 1;
-        return 0;
+      var weightA = parseInt(jsondata.content[a].weight) || 0;
+      var weightB = parseInt(jsondata.content[b].weight) || 0;
+      if (weightA < weightB) return 1;
+      if (weightA > weightB) return -1;
+      return 0;
     });
 
     var studySelect = $("#studySelect");
     var yearSelect = $("#yearSelect");
 
     $.each(sortedStudies, function(index, value) {
-      studySelect[0].add(new Option(value, studies.indexOf(value)));
+        studySelect[0].add(new Option(value, studies.indexOf(value)));
     });
     if (editormode) {
       studySelect[0].add(new Option("Studie toevoegen...", "new"));
@@ -67,7 +70,9 @@ function initialize() {
 
         yearSelect.find("option").not(':first').remove();
         $.each(sortedYearOptions, function(index, value) {
-          yearSelect[0].add(new Option(value, yearOptions.indexOf(value)));
+          if (value != "weight") {
+             yearSelect[0].add(new Option(value, yearOptions.indexOf(value)));
+          }
         })
         if (editormode) {
           yearSelect[0].add(new Option("Nieuw studiejaar...", "new"));
@@ -238,7 +243,6 @@ function loadMindmap(study, year) {
       year = years.length - 1;
     }
   }
-
   var data = studyObject[years[year]];
 
   $("#reset_button").data("message", data["textbubble"]["resetMessage"]);
@@ -278,7 +282,8 @@ function loadMindmap(study, year) {
     $(".node_root").data("globalproperties", {
       textbubble: data["textbubble"],
       year: years[year],
-      study: studies[study]
+      study: studies[study],
+      weight: studyObject.weight
     })
   }
 }

@@ -146,6 +146,7 @@ $MOBILE_WIDTH_MAX: 500px;
     }
 
     tr {
+
       td {
         height: 50px;
         border-bottom: 1px solid darken(rgb(245, 246, 247), 5);
@@ -184,6 +185,17 @@ $MOBILE_WIDTH_MAX: 500px;
         opacity: .9;
         font-weight: bold;
         text-align: right;
+      }
+
+      &.subsection {
+        font-size: 1.3em;
+
+        td {
+          box-sizing: border-box;
+          padding-left: 25px;
+          text-align: left;
+          border: none;
+        }
       }
     }
 
