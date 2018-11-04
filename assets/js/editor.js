@@ -13,7 +13,7 @@ editormode = true;
  * Contains the interal property names of
  * all editable node-properties.
  */
-var EDITABLE_PROPERTIES = ["name", "color", "openMessage", "closeMessage", "type", "data", "width"];
+var EDITABLE_PROPERTIES = ["name", "color", "width", "left", "weight", "openMessage", "closeMessage", "type", "data"];
 
 /*
  * Contains the mapping of each standard
@@ -32,6 +32,7 @@ var INPUT_TYPES = {
   study: "text",
   weight: "number",
   width: "number",
+  left: "dropdown",
   year: "text",
   clone: "button",
   delete: "button"
@@ -56,8 +57,9 @@ var NORMALIZED_PROPERTY_NAMES = {
   welcometext: "Welkomsttekst",
   resettext: "Resettekst",
   study: "Studie",
-  weight: "Gewicht studie",
+  weight: "Gewicht",
   width: "Node breedte in pixels",
+  left: "Positie",
   year: "Studiejaar",
   clone: "Kloon",
   delete: "Verwijder"
@@ -153,11 +155,16 @@ var mindmapFormHelper = {
       inputField.type = type;
       inputField.value = value || "";
     } else if (type == "dropdown"){
+      var inputField = document.createElement("select");
       if (key == "type") {
-        var inputField = document.createElement("select");
         $.each(SUPPORTED_TYPES, function(index, value) {
           $('<option />', {value: value, text: value}).appendTo($(inputField));
         });
+      } else if (key == "left") {
+        $.each(["Links", "Rechts"], function(index, value) {
+          $('<option />', {value: value, text: value}).appendTo($(inputField));
+        });
+        $(inputField).val((value)? "Links" : "Rechts");
       }
     } else {
       var inputField = document.createElement(type);
@@ -488,6 +495,12 @@ var mindmapEditor = {
       // Global properties.
       this.updateRootNode(object, property, value);
       return
+    } else if (property == "left") {
+      if (value.toLowerCase() == "links") {
+        $(object).data("properties")["left"] = true;
+      } else {
+        $(object).data("properties")["left"] = false;
+      }
     } else {
       $(object).data("properties")[property] = value;
     }

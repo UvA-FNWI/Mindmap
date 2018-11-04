@@ -257,13 +257,45 @@ function loadMindmap(study, year) {
 
   $(leftBranch, rightBranch).css("display", "none");
 
+  var leftNodes = [];
+  var rightNodes = [];
+
+  var index = 0;
+
   $.each(data.nodes, function(index, nodeData) {
+    nodeData.left = (typeof nodeData.left == "undefined")? (leftNodes.length <= rightNodes.length) : nodeData.left;
+    nodeData.weight = nodeData.weight || ++index;
+
     var node = nodeBuilder(nodeData);
-    if (index % 2 == 0) {
-      leftBranch.append(node);
+    if (nodeData.left) {
+      leftNodes.push(node);
     } else {
-      rightBranch.append(node);
+      rightNodes.push(node);
     }
+  });
+
+  leftNodes = leftNodes.sort(function(a, b){
+    var weightA = parseInt(a.children(".node").data("properties").weight) || 0;
+    var weightB = parseInt(b.children(".node").data("properties").weight) || 0;
+    if (weightA < weightB) return 1;
+    if (weightA > weightB) return -1;
+    return 0;
+  });
+
+  rightNodes = rightNodes.sort(function(a, b){
+    var weightA = parseInt(a.children(".node").data("properties").weight) || 0;
+    var weightB = parseInt(b.children(".node").data("properties").weight) || 0;
+    if (weightA < weightB) return 1;
+    if (weightA > weightB) return -1;
+    return 0;
+  });
+
+  $.each(leftNodes, function(index, node) {
+    leftBranch.append(node);
+  });
+
+  $.each(rightNodes, function(index, node) {
+    rightBranch.append(node);
   });
 
   nodewidth = $(".node").first().outerWidth() || 250;
@@ -309,6 +341,9 @@ function replaceBubble(newHTML) {
  * Helper function to use the right builder function
  * to create the requested node.
  */
+var left = true;
+var count = 0;
+
 function nodeBuilder(node) {
   switch (node.type) {
     case "checklist":
@@ -327,6 +362,11 @@ function nodeBuilder(node) {
 
   // Fallback for when no width is explicitly set.
   node.width = node.width || 250;
+
+  // Fallback for when no position is explicitly set.
+  node.weight = node.weight || ++count;
+
+  left = !left;
 
   $(createdNode).children(".node").data("properties", node);
 
