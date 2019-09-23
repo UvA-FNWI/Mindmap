@@ -1,0 +1,13 @@
+{exec} = require "child_process"
+
+task "sbuild", "Compile all coffeescript-files.", ->
+
+  # Compile the index script.
+  exec "cat shared/*.coffee shared/nodes/*.coffee index/base.coffee | coffee -cs > ../../assets/js/index.js", (err, stdout, stderr) ->
+    throw err if err
+    console.log stderr
+
+  # Compile the editor script.
+  exec "cat shared/*.coffee shared/nodes/*.coffee editor/*.coffee | coffee -cs > ../../assets/js/editor.js", (err, stdout, stderr) ->
+    throw err if err
+    console.log stderr

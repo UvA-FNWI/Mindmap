@@ -1,0 +1,20 @@
+/* All variables, including colors. */
+@import "shared/variables";
+
+/* All mixins. */
+@import "shared/mixins";
+
+/* All animation keyframes. */
+@import "shared/animations";
+
+/* Simple CSS-reset. */
+// @import "index/minireset";
+
+/* Base styling and layout. */
+@import "index/base";
+
+/* Base styling for the mindmap. */
+@import "index/mindmap";
+
+/* Styling for the nodes. */
+@import "index/nodes";

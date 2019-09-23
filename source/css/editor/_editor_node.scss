@@ -1,0 +1,16 @@
+.node {
+  &.editor-selected {
+    &:after {
+      display: block;
+      position: absolute;
+      content: '';
+      left: -4px;
+      top: -4px;
+      width: calc(100% + 8px);
+      height: calc(100% + 8px);
+      z-index: 0;
+      background: #2196f3;
+      transition: opacity .3s ease-in-out;
+    }
+  }
+}

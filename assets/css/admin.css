@@ -1,0 +1,234 @@
+/* All variables, including colors. */
+/* All mixins. */
+/* All animations. */
+@-webkit-keyframes shrinkContentView {
+  from {
+    width: 100%; }
+  to {
+    width: calc(100% - 300px); } }
+
+@-moz-keyframes shrinkContentView {
+  from {
+    width: 100%; }
+  to {
+    width: calc(100% - 300px); } }
+
+@-o-keyframes shrinkContentView {
+  from {
+    width: 100%; }
+  to {
+    width: calc(100% - 300px); } }
+
+@keyframes shrinkContentView {
+  from {
+    width: 100%; }
+  to {
+    width: calc(100% - 300px); } }
+
+@-webkit-keyframes expandContentView {
+  from {
+    width: calc(100% - 300px); }
+  to {
+    width: 100%; } }
+
+@-moz-keyframes expandContentView {
+  from {
+    width: calc(100% - 300px); }
+  to {
+    width: 100%; } }
+
+@-o-keyframes expandContentView {
+  from {
+    width: calc(100% - 300px); }
+  to {
+    width: 100%; } }
+
+@keyframes expandContentView {
+  from {
+    width: calc(100% - 300px); }
+  to {
+    width: 100%; } }
+
+@-webkit-keyframes slideInSideMenu {
+  from {
+    left: 100%; }
+  to {
+    left: calc(100% - 300px); } }
+
+@-moz-keyframes slideInSideMenu {
+  from {
+    left: 100%; }
+  to {
+    left: calc(100% - 300px); } }
+
+@-o-keyframes slideInSideMenu {
+  from {
+    left: 100%; }
+  to {
+    left: calc(100% - 300px); } }
+
+@keyframes slideInSideMenu {
+  from {
+    left: 100%; }
+  to {
+    left: calc(100% - 300px); } }
+
+@-webkit-keyframes slideOutSideMenu {
+  from {
+    left: calc(100% - 300px); }
+  to {
+    left: 100%; } }
+
+@-moz-keyframes slideOutSideMenu {
+  from {
+    left: calc(100% - 300px); }
+  to {
+    left: 100%; } }
+
+@-o-keyframes slideOutSideMenu {
+  from {
+    left: calc(100% - 300px); }
+  to {
+    left: 100%; } }
+
+@keyframes slideOutSideMenu {
+  from {
+    left: calc(100% - 300px); }
+  to {
+    left: 100%; } }
+
+/* Base styling and layout. */
+/* Components such as buttons and input fields. */
+#content.sidemenu-open {
+  animation: shrinkContentView .4s ease-in-out;
+  width: calc(100% - 300px); }
+
+#content.sidemenu-closed {
+  animation: expandContentView .4s ease-in-out;
+  width: 100%; }
+
+#editor-sidemenu {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  height: 100%;
+  width: 300px;
+  background: white;
+  border-left: 1px solid #e7e9ec; }
+  #editor-sidemenu.sidemenu-open {
+    animation: slideInSideMenu .4s ease-in-out;
+    left: calc(100% - 300px); }
+  #editor-sidemenu.sidemenu-closed {
+    animation: slideOutSideMenu .4s ease-in-out;
+    left: 100%; }
+  #editor-sidemenu #editor-sidemenu-slidebutton {
+    position: absolute;
+    left: -1.8em;
+    top: calc(50% - 3em);
+    height: 6em;
+    width: 1.8em;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+    padding: 0;
+    text-align: center;
+    background-color: inherit;
+    outline: none; }
+    #editor-sidemenu #editor-sidemenu-slidebutton.closed .fas.fa-angle-double-right {
+      transform: rotate(180deg); }
+  #editor-sidemenu #editor-sidemenu-slider {
+    position: absolute;
+    left: -3px;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    z-index: 2; }
+    #editor-sidemenu #editor-sidemenu-slider:hover {
+      cursor: ew-resize; }
+  #editor-sidemenu #editor-sidemenu-header {
+    position: absolute;
+    left: 5px;
+    top: 0;
+    width: calc(100% - 5px);
+    height: 80px;
+    box-sizing: border-box;
+    border-bottom: 1px solid rgba(200, 200, 200, 0.3); }
+    #editor-sidemenu #editor-sidemenu-header h2 {
+      position: absolute;
+      left: 10px;
+      top: 0px;
+      height: 50px; }
+    #editor-sidemenu #editor-sidemenu-header #editor-sidemenu-last-saved {
+      position: absolute;
+      left: 10px;
+      top: 35px;
+      font-size: 12px;
+      font-weight: 300;
+      opacity: .8; }
+  #editor-sidemenu #editor-sidemenu-footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 80px;
+    border-top: 1px solid rgba(200, 200, 200, 0.3);
+    text-align: center;
+    line-height: 60px; }
+    #editor-sidemenu #editor-sidemenu-footer #editor-sidemenu-savebutton {
+      color: #2196f3;
+      width: 100px;
+      padding: 5px; }
+    #editor-sidemenu #editor-sidemenu-footer #editor-sidemenu-banner {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 20px;
+      text-align: center;
+      line-height: 20px;
+      font-size: 12px;
+      color: white;
+      transition: background-color .3s ease-in-out; }
+      #editor-sidemenu #editor-sidemenu-footer #editor-sidemenu-banner.success {
+        background-color: #4caf50; }
+      #editor-sidemenu #editor-sidemenu-footer #editor-sidemenu-banner.error {
+        background-color: #f44336; }
+  #editor-sidemenu #editor-sidemenu-content {
+    position: absolute;
+    left: 5px;
+    top: 80px;
+    width: calc(100% - 5px);
+    height: calc(100% - 160px); }
+    #editor-sidemenu #editor-sidemenu-content #editor-sidemenu-placeholder {
+      position: absolute;
+      width: 100%;
+      top: 45%;
+      text-align: center; }
+
+/* The editor sidemenu. */
+#editor-sidemenu-content .editor-item {
+  width: 100%;
+  min-height: 100px; }
+  #editor-sidemenu-content .editor-item label.title {
+    display: block;
+    left: 0;
+    margin-top: 10px;
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    font-size: 15px;
+    font-weight: bold;
+    box-sizing: border-box;
+    padding-left: 15px; }
+
+.child-item.editor-selected .node:after {
+  display: block;
+  position: absolute;
+  content: '';
+  left: -4px;
+  top: -4px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+  z-index: 0;
+  background: #2196f3;
+  transition: opacity .3s ease-in-out; }

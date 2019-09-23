@@ -1,0 +1,26 @@
+/* All variables, including colors. */
+@import "shared/variables";
+
+/* All mixins. */
+@import "shared/mixins";
+
+/* All animations. */
+@import "editor/animations";
+
+/* Base styling and layout. */
+@import "editor/base";
+
+/* Components such as buttons and input fields. */
+@import "editor/components";
+
+/* The editor sidemenu. */
+@import "editor/editor";
+
+/* The WYSIWYG editor. */
+@import "editor/wysiwyg";
+
+/* The studies editor. */
+@import "editor/studies_editor";
+
+/* The slight differences in styling for editable-nodes. */
+@import "editor/editor_node";

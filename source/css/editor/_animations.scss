@@ -1,0 +1,20 @@
+@include keyframe(shrinkContentView) {
+  from {width: 100%};
+  to {width: calc(100% - #{$sideMenuWidth})};
+}
+
+@include keyframe(expandContentView) {
+  from {width: calc(100% - #{$sideMenuWidth})};
+  to {width: 100%};
+}
+
+@include keyframe(slideInSideMenu) {
+  from {left: 100%};
+  to {left: calc(100% - #{$sideMenuWidth})};
+}
+
+@include keyframe(slideOutSideMenu) {
+  from {left: calc(100% - #{$sideMenuWidth})};
+  to {left: 100%};
+}
+

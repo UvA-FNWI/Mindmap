@@ -1,0 +1,215 @@
+#editor-sidemenu-content {
+  overflow: scroll;
+
+  a {
+    color: #2196f3;
+  }
+
+  .editor-item {
+    width: 100%;
+    min-height: 60px;
+
+    &:last-of-type {
+      margin-bottom: 100px;
+    }
+
+    label.title {
+      display: block;
+      left: 0;
+      margin-top: 10px;
+      width: 100%;
+      height: 30px;
+      line-height: 30px;
+      font-size: 15px;
+      font-weight: bold;
+      box-sizing: border-box;
+      padding-left: 15px;
+    }
+
+    input[type="text"], input[type="number"] {
+      margin-left: 15px;
+      width: calc(90% - 30px);
+    }
+
+    .hexblock {
+      height: 20px;
+      margin-left: 15px;
+      background-color: white;
+      border: 1px solid #e7e9ec;
+      width: calc(90% - 30px - 26px);
+      float: left;
+      padding: 3px;
+
+      .hexbefore {
+        float: left;
+        width: 15px;
+        height: 20px;
+        line-height: 21px;
+        font-size: 10px;
+        text-align: center;
+        color: #9e9e9e;
+      }
+
+      .hexinput {
+        float: left;
+        padding: 0;
+        margin: 0;
+        border: none;
+        height: 20px;
+        font-family: monospace;
+        width: calc(100% - 15px);
+      }
+    }
+
+    input[type="color"] {
+      -webkit-appearance: none;
+      float: left;
+      border-left: none;
+      width: 19px;
+      height: 20px;
+    }
+
+    textarea {
+      margin-left: 15px;
+      width: calc(90% - 30px);
+    }
+
+    .inputblock {
+      margin-left: 15px;
+      background-color: white;
+      border: 1px solid #e7e9ec;
+      height: 26px;
+      width: calc(90% - 20px);
+      float: left;
+      margin-bottom: 16px;
+
+      input {
+        padding: 3px;
+        box-sizing: border-box;
+        float: left;
+        margin: 0;
+        border: none;
+        height: 26px;
+        width: calc(100% - 27px);
+      }
+
+      .removeButton {
+        float: right;
+        width: 26px;
+        height: 26px;
+        line-height: 26px;
+        text-align: center;
+        border-left: 1px solid #e7e9ec;
+        color: #f44336;
+        font-size: 10px;
+
+        &:hover {
+          cursor: pointer;
+          opacity: .6;
+        }
+      }
+    }
+
+    .add-button {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 5px 15px 5px 15px;
+      color: #4caf50;
+    }
+
+    .platform-url {
+      display: block;
+      width: calc(90% - 5px);
+      text-align: right;
+      height: 20px;
+      line-height: 30px;
+      font-size: 12px;
+      text-decoration: none;
+
+      .fa-youtube {
+        color: #f44336;
+      }
+
+      .fa-google-drive {
+        color: #3f51b5;
+      }
+    }
+
+    .vertical-position-button {
+      margin-left: 15px;
+      width: calc(100% - 36px);
+      padding: 5px 10px 5px 10px;
+    }
+
+    .horizontal-position-button {
+      margin-left: 15px;
+      margin-top: 20px;
+      width: calc(50% - 26px);
+      padding: 5px 10px 5px 10px;
+    }
+
+    .vertical-position-button, .horizontal-position-button {
+      &:disabled {
+        opacity: .3;
+      }
+
+      span {
+        display: inline-block;
+        width: 80px;
+      }
+
+      .fas {
+        vertical-align: middle;
+
+        &.fa-sort-up:before {
+          display: block;
+          margin-top: 5px;
+        }
+
+        &.fa-sort-down:before {
+          display: block;
+          margin-top: -5px;
+        }
+      }
+    }
+
+    .node-add-button, .node-add-root-button, .node-remove-button {
+      margin-left: 15px;
+      width: calc(90% - 15px);
+      padding: 5px 15px 5px 15px;
+      margin-bottom: 10px;
+    }
+
+    .node-add-button {
+      color: #4caf50;
+    }
+
+    .node-add-root-button {
+      color: #34495e;
+    }
+
+    .node-remove-button {
+      color: #f44336;
+    }
+
+    .editor-dropdown {
+
+      select {
+        margin-left: 15px;
+        width: calc(90% - 22px);
+        height: 28px;
+      }
+
+      &:after {
+        height: 7px;
+        width: 7px;
+        margin-top: -4px;
+        right: 1em;
+        top: 50%;
+      }
+    }
+
+  }
+
+}

@@ -1,0 +1,17 @@
+.child-item.video {
+  .node-active-content {
+    .text {
+      font-weight: normal;
+      box-sizing: border-box;
+      padding: 0 15px 15px 15px;
+      font-size: 14px;
+      line-height: 16px;
+    }
+
+    .frame {
+      width: 100%;
+      background-color: rgba(255, 255, 255, .8);
+      border: none;
+    }
+  }
+}

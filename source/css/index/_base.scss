@@ -1,0 +1,215 @@
+body {
+  background-color: $basecolor;
+  font-family: $fontfamily;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+input {
+  font-family: $fontfamily;
+}
+
+button {
+  -webkit-appearance: none;
+  border-radius: 3px;
+  border: none;
+  background-color: white;
+  color: $basecolor;
+  transition: background-color .2s ease-in-out;
+  border: 1px solid $bordercolor;
+
+  &:hover:enabled {
+    cursor: pointer;
+    background-color: rgb(245, 246, 247);
+  }
+
+  &:disabled {
+    opacity: .8;
+  }
+}
+
+#text-ruler {
+  visibility: hidden;
+  white-space: nowrap;
+}
+
+.dropdown {
+  position: relative;
+
+  select {
+    -webkit-appearance: none;
+    width: 100%;
+    border: 1px solid #e7e9ec;
+    outline: none;
+    height: 22px;
+    padding: 3px;
+    background-color: white;
+    border-radius: 0;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:after {
+    border: 1px solid $basecolor;
+    border-right: 0;
+    border-top: 0;
+    content: " ";
+    display: block;
+    height: 5px;
+    width: 5px;
+    pointer-events: none;
+    position: absolute;
+    transform: rotate(-45deg);
+    margin-top: -2px;
+    right: .75em;
+    top: 40%;
+  }
+}
+
+#content {
+  position: fixed;
+  background-color: $backgroundcolor;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  border: 1.5em solid $basecolor;
+  overflow: hidden;
+  text-align: center;
+
+  #hint {
+    opacity: 0;
+    position: absolute;
+    left: 4em;
+    top: 4em;
+    font-weight: bolder;
+    font-size: .9em;
+    color: rgba(0, 0, 0, .7);
+    max-width: 65%;
+  }
+
+  .zoom-button {
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    z-index: 9;
+    top: 2em;
+    font-size: 16px;
+  }
+
+  #zoom-out-button {
+    right: 2em;
+  }
+
+  #zoom-in-button {
+    right: 6em;
+  }
+
+  #logo {
+    display: inline-block;
+    width: 50vw;
+    margin-top: 10vh;
+    max-width: 80%;
+  }
+
+  #reset-button {
+    display: none;
+    opacity: 0;
+    margin-top: 5vh;
+    width: 110px;
+  }
+
+  #reset-position-button {
+    position: absolute;
+    bottom: 3em;
+    height: 18px;
+    width: 150px;
+    left: calc(50% - 75px);
+    margin: 0;
+    z-index: 5;
+  }
+
+  #footer {
+    position: absolute;
+    background-color: $basecolor;
+    color: white;
+    right: 4em;
+    bottom: 4em;
+    font-size: .5em;
+    padding: 1em;
+    line-height: .1em;
+    height: 40px;
+    text-align: left;
+
+    #privacy-button {
+      color: white;
+    }
+  }
+
+  #overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 10;
+  }
+
+  #privacy-popup {
+    display: none;
+    opacity: 0;
+    position: absolute;
+    z-index: 11;
+    width: 500px;
+    height: 60vh;
+    top: 20vh;
+    left: calc(50% - 250px - 1em);
+    background-color: white;
+    padding: 2em 4em 4em 4em;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    text-align: center;
+    border: 4px solid $basecolor;
+
+    h2 {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    #accept-button {
+      -webkit-appearance: none;
+      border-radius: 3px;
+      border: none;
+      background-color: $basecolor;
+      color: white;
+      padding: 5px 0 5px 0;
+      font-size: .8em;
+      transition: background-color .2s ease-in-out;
+      width: 140px;
+      left: calc(50% - 70px - 1em);
+      bottom: calc(20vh + 1px + 1em);
+      z-index: 2;
+
+      &:hover {
+        cursor: pointer;
+        background-color: darken($basecolor, 5);
+      }
+    }
+  }
+
+}

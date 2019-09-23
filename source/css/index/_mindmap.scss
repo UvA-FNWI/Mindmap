@@ -1,0 +1,197 @@
+#content {
+  #mindmap {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    white-space: nowrap;
+
+    #rootnode {
+      border: none;
+      margin: 0;
+      padding: 0 3vw 0 3vw;
+      height: auto;
+      text-align: center;
+      width: 200px;
+      height: 100%;
+
+      &:hover {
+        cursor: default;
+
+        &:after {
+          display: none;
+        }
+      }
+
+      img {
+        display: block;
+        height: 26vh;
+        margin-top: 37vh;
+        width: auto;
+        margin-left: auto;
+        margin-right: auto;
+        user-drag: none;
+        user-select: none;
+        -moz-user-select: none;
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+      }
+
+      .textbubble {
+        position: absolute;
+        display: inline-block;
+        bottom: 62.5vh;
+        max-width: 200%;
+        min-width: 50%;
+        width: auto;
+        right: -5%;
+        height: auto;
+        word-wrap: break-word;
+        white-space: normal;
+        font-size: .8em;
+        background-color: $basecolor;
+        color: white;
+        z-index: 2;
+
+        &.bubbleFadeIn {
+          animation: fade-in .8s ease-in-out forwards;
+        }
+
+        &.bubbleFadeOut {
+          animation: fade-out .8s ease-in-out forwards;
+        }
+
+        &:after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          width: 0;
+          height: 0;
+          border: 12px solid transparent;
+          border-top-color: $basecolor;
+          border-bottom: 0;
+          border-left: 0;
+          margin-left: -6px;
+          margin-bottom: -12px;
+        }
+
+        &:before {
+          display: block;
+          position: absolute;
+          opacity: 0;
+          content: '';
+          left: -6px;
+          top: -6px;
+          width: calc(100% + 12px);
+          height: calc(100% + 12px);
+          z-index: -1;
+          background: repeating-linear-gradient(
+            135deg,
+            $basecolor,
+            $basecolor 2px,
+            rgb(245, 246, 247) 2px,
+            rgb(245, 246, 247) 4px
+          );
+          transition: opacity .2s ease-in-out;
+        }
+
+        &:hover {
+          cursor: pointer;
+          &:before {
+            opacity: .4;
+          }
+        }
+
+        .textBubbleContent {
+          display: block;
+          width: auto;
+          height: 100%;
+          padding: 15px;
+          background-color: inherit;
+
+          p {
+            margin: 0;
+          }
+
+          &.loading {
+            height: auto;
+            overflow: hidden;
+
+            label {
+              display: block;
+              float: left;
+              height: 40px;
+              line-height: 40px;
+              margin: 0 20px 0 10px;
+              font-size: 1.1em;
+            }
+
+            .loadingRing {
+              display: inline-block;
+              width: 40px;
+              height: 40px;
+              margin: 0;
+              float: right;
+
+              div {
+                box-sizing: border-box;
+                display: block;
+                position: absolute;
+                width: 32px;
+                height: 32px;
+                margin: 6px;
+                border: 4px solid white;
+                border-radius: 50%;
+                animation: loadingRing 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+                border-color: white transparent transparent transparent;
+              }
+            }
+          }
+
+          &.studySelect {
+            width: 250px;
+
+            select {
+              width: 90%;
+              margin-top: 15px;
+
+              &:disabled {
+                opacity: .7;
+              }
+            }
+
+            button {
+              margin-top: 15px;
+              width: 60%;
+            }
+          }
+
+          span {
+            &.standard {
+              padding: 15px;
+            }
+          }
+        }
+      }
+    }
+
+    #leftbranch {
+      direction: rtl;
+      text-align: right;
+    }
+
+    .children {
+      position: relative;
+      display: inline-block;
+      margin: 0;
+      padding: 0 0 0 1vw;
+      list-style: none;
+      vertical-align: middle;
+      text-align: left;
+    }
+  }
+}
