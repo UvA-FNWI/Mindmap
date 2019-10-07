@@ -13,7 +13,7 @@ class Animation
 
   # Moving animation to move an element from a given position
   # to a target position over the course of 'durationMS' ms.
-  move: (fromX, fromY, toX, toY, durationMS) ->
+  move: (fromX, fromY, toX, toY, durationMS, callback=false) ->
     steps = durationMS / 16
     curS = 0
 
@@ -25,6 +25,8 @@ class Animation
 
       if curS < Math.PI
         requestAnimationFrame(step)
+      else if callback
+        callback()
     requestAnimationFrame(step)
 
   # Moves an element relative to its current position.

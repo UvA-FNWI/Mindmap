@@ -6,8 +6,8 @@
     <title>Flow & Grow</title>
 
     <!-- index.css needs to be the first stylesheet. -->
-    <link href="assets/css/index.css" rel="stylesheet">
-    <script src="assets/js/index.js"></script>
+    <link href="assets/css/index.css?a=<?php echo time() ?>" rel="stylesheet">
+    <script src="assets/js/index.js?a=<?php echo time() ?>"></script>
 
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">

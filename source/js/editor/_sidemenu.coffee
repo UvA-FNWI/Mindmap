@@ -174,15 +174,21 @@ class SideMenu
   # Binds the click-listener to the save-button.
   bindSaveButton: () ->
     @saveButton.addEventListener "click", () =>
+      @saveButton.disabled = true
+      @saveButton.innerHTML = "Aan het opslaan...&nbsp;&nbsp;<i class='fas fa-pause-circle'></i>"
       httpRequest = new XMLHttpRequest()
       httpRequest.onreadystatechange = () =>
         if httpRequest.readyState == XMLHttpRequest.DONE
           if httpRequest.status == 200
-            @lastSaved.innerHTML = "Laatst opgeslagen: #{(new Date().getHours())}:#{(new Date().getMinutes())}"
+            @lastSaved.innerHTML = "Laatst opgeslagen: #{("0" + new Date().getHours()).slice(-2)}:#{("0" + new Date().getMinutes()).slice(-2)}"
             @successMessage "Mindmap opgeslagen!"
+            @saveButton.innerHTML = "Opslaan&nbsp;&nbsp;<i class='fas fa-save'></i>"
+            @saveButton.disabled = false
           else
             @errorMessage("Kon de mindmap niet opslaan!")
             console.error "Couldn't save!", httpRequest
+            @saveButton.innerHTML = "Opslaan&nbsp;&nbsp;<i class='fas fa-save'></i>"
+            @saveButton.disabled = false
       httpRequest.open("post", "save.php")
       httpRequest.setRequestHeader("Content-Type", "application/json", true)
 

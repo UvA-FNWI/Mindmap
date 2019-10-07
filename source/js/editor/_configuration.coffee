@@ -6,6 +6,7 @@ EDITABLE_PROPERTIES = [
   "messages_close",
   "weight",
   "data_theorems",
+  "data_feedback",
   "data_text",
   "data_url",
   "type"
@@ -20,6 +21,7 @@ NORMALIZED_NAMES = {
   "messages_close": "Sluitingstekst",
   "weight": "Positie"
   "data_theorems": "Stellingen",
+  "data_feedback": "Feedback",
   "data_text": "Tekst",
   "data_url": "Video link",
   "type": "Node Type"
@@ -34,6 +36,7 @@ PROPERTY_TYPES = {
   "messages_close": "multilinetext",
   "weight": "position",
   "data_theorems": "multitext",
+  "data_feedback": "feedback",
   "data_text": "multilinetext",
   "data_url": "videourl",
   "type": "nodetype"

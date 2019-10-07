@@ -28,6 +28,8 @@ measureTextWidth = (text) ->
   ruler.innerHTML = text
   return ruler.offsetWidth
 
-# Cleans up some restricted tags from the HTML.
-tagCleanup = (html) ->
-  return html.replace(/<\/?(p|div|span).*?>/g, "")
+# Returns just the text of some html content.
+getText = (html) ->
+  block = document.createElement "div"
+  block.innerHTML = html
+  return block.innerText

@@ -102,9 +102,9 @@ class BaseNode
 
   # Removes focus from this node by focussing on its parent-node.
   blur: () ->
-    if @isRootNode
+    if @isRootNode && !fg.mindmap.isMovingToCenter
       fg.mindmap.moveToCenter()
-    else
+    else if @nodeData.parent
       focusAnimation = new Animation(document.querySelector "#mindmap")
       expandButton = @nodeData.parent.querySelector ".node-expand"
       focusX = Math.ceil(document.getElementById("content").offsetWidth / 2 - expandButton.offsetWidth / 2)
@@ -150,7 +150,7 @@ class BaseNode
     node.style.height = "#{@originalHeight + activeContentHeight}px"
 
     # If set, show the open-message.
-    if @nodeData.messages.open and @nodeData.messages.open.length > 0
+    if getText(@nodeData.messages.open) and getText(@nodeData.messages.open).length > 0
       message = document.createElement "span"
       message.className = "textBubbleContent standard"
       message.innerHTML = @nodeData.messages.open
@@ -163,7 +163,7 @@ class BaseNode
     @originalHeight = 0
 
     # If set, show the close-message.
-    if @nodeData.messages.close and @nodeData.messages.close.length > 0
+    if getText(@nodeData.messages.close) and getText(@nodeData.messages.close).length > 0
       message = document.createElement "span"
       message.className = "textBubbleContent standard"
       message.innerHTML = @nodeData.messages.close
@@ -242,10 +242,7 @@ class BaseNode
 
     # Style the colored lines that run to the node.
     target = "##{nodeID}.child-item,#leftbranch ##{nodeID}.child-item:before,#rightbranch ##{nodeID}.child-item:before"
-    rule = "border-color: " + @nodeData.color
-    #if navigator.userAgent.toLowerCase().indexOf("firefox") > -1
-    #  document.styleSheets[0].insertRule("#{target} {#{rule}}")
-    #else
+    rule = "border-color: #{@nodeData.color}"
     document.styleSheets[0].addRule(target, rule)
 
     # Add the open/close arrow.

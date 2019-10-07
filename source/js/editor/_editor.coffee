@@ -173,14 +173,14 @@ class Editor
       renameButton.addEventListener "click", () =>
        newName = window.prompt "Wat is de nieuwe naam van de studie?"
        if newName
-        study[window.fg.mindmap.sortedStudies.indexOf(study)] = newName
         window.fg.mindmap.data.studies[newName] = JSON.parse(JSON.stringify(window.fg.mindmap.data.studies[study]))
         delete window.fg.mindmap.data.studies[study]
         document.querySelector("#study-title").innerText = newName
         row = document.querySelector("#studies-column .study-row[data-study='#{study}']")
         row.setAttribute "data-study", newName
         row.querySelector(".study-name").innerText = newName
-        document.querySelector("#studySelect option[value='#{window.fg.mindmap.sortedStudies.indexOf("BSc Blyat")}']").innerText = newName
+        document.querySelector("#studySelect option[value='#{window.fg.mindmap.sortedStudies.indexOf(study)}']").innerText = newName
+        window.fg.mindmap.sortedStudies[window.fg.mindmap.sortedStudies.indexOf(study)] = newName
       buttonContainer.appendChild renameButton
 
       moveUpButton = document.createElement "button"
@@ -251,12 +251,12 @@ class Editor
       welcomeTitle.innerText = "Welkomst-tekst"
       detailsContainer.appendChild welcomeTitle
 
-      welcomeEdit = document.createElement "input"
-      welcomeEdit.className = "message-edit"
-      welcomeEdit.value = studyData.data.welcomeMessage || "Lorem ipsum dolor"
+      welcomeEdit = document.createElement "div"
+      welcomeEdit.className = "input message-edit"
+      welcomeEdit.innerHTML = studyData.data.welcomeMessage || "Lorem ipsum dolor"
       welcomeEdit.addEventListener "click", () =>
-        window.fg.editor.createWYSIWYGEditor welcomeEdit.value, (value) ->
-          welcomeEdit.value = value
+        window.fg.editor.createWYSIWYGEditor welcomeEdit.innerHTML, true, (value) ->
+          welcomeEdit.innerHTML = value
           window.fg.mindmap.data.studies[study].data.welcomeMessage = value
       detailsContainer.appendChild welcomeEdit
 
@@ -265,12 +265,12 @@ class Editor
       resetTitle.innerText = "Reset-tekst"
       detailsContainer.appendChild resetTitle
 
-      resetEdit = document.createElement "input"
-      resetEdit.className = "message-edit"
-      resetEdit.value = studyData.data.resetMessage || "Lorem ipsum dolor"
+      resetEdit = document.createElement "div"
+      resetEdit.className = "input message-edit"
+      resetEdit.innerHTML = studyData.data.resetMessage || "Lorem ipsum dolor"
       resetEdit.addEventListener "click", () =>
-        window.fg.editor.createWYSIWYGEditor resetEdit.value, (value) ->
-          resetEdit.value = value
+        window.fg.editor.createWYSIWYGEditor resetEdit.innerHTML, true, (value) ->
+          resetEdit.innerHTML = value
           window.fg.mindmap.data.studies[study].data.resetMessage = value
       detailsContainer.appendChild resetEdit
 
@@ -317,7 +317,8 @@ class Editor
           if dupName
             window.fg.mindmap.data.studies[study].years[dupName] = JSON.parse(JSON.stringify(studyData.years[yearName]))
             window.fg.mindmap.data.studies[study].years[dupName].data.weight = Object.keys(studyData.years).length
-            document.querySelector("#years-container .order.down:disabled").disabled = false
+            if document.querySelector("#years-container .order.down:disabled")
+              document.querySelector("#years-container .order.down:disabled").disabled = false
             studyCount = parseInt(document.querySelector("#studies-column [data-study='#{study}'] .study-year-count").innerText) + 1
             document.querySelector("#studies-column [data-study='#{study}'] .study-year-count").innerText = "#{studyCount} studiejaren"
             document.querySelector("#details-column h6").innerText = "#{studyCount} studiejaren"
@@ -341,7 +342,7 @@ class Editor
 
         downButton.addEventListener "click", () =>
           lowerYear = `Object.keys(studyData.years).find(key => studyData.years[key].data.weight == parseInt(studyData.years[yearName].data.weight) + 1)`
-          studyData.years[lowerYear].data.weight -= 1
+          studyData.years[higherYear].data.weight = parseInt(studyData.years[higherYear].data.weight) - 1
 
           item.nextElementSibling.querySelector(".order.down").disabled = downButton.disabled
           item.nextElementSibling.querySelector(".order.up").disabled = upButton.disabled
@@ -353,7 +354,7 @@ class Editor
 
         upButton.addEventListener "click", () =>
           higherYear = `Object.keys(studyData.years).find(key => studyData.years[key].data.weight == parseInt(studyData.years[yearName].data.weight) - 1)`
-          studyData.years[higherYear].data.weight += 1
+          studyData.years[higherYear].data.weight = parseInt(studyData.years[higherYear].data.weight) + 1
 
           item.previousElementSibling.querySelector(".order.down").disabled = downButton.disabled
           item.previousElementSibling.querySelector(".order.up").disabled = upButton.disabled
@@ -396,7 +397,10 @@ class Editor
               name: "Nieuwe node...."
               color: "#6b2565",
               type: "text",
-              messages: {}
+              messages: {
+                open: "Lorem ipsum dolor sit amet",
+                close: "Lorem ipsum dolor sit amet"
+              },
               data: {
                 text: "Lorem ipsum dolor sit amet"
               },
@@ -448,7 +452,9 @@ class Editor
         window.fg.mindmap.sortedStudies.push newStudyName
         window.fg.mindmap.data.studies[newStudyName] = {
           data: {
-            weight: newStudyWeight
+            weight: newStudyWeight,
+            welcomeMessage: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            resetMessage: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
           },
           years: {}
         }
@@ -506,7 +512,7 @@ class Editor
   # Creates a popup with an HTML WYSIWYG editor
   # to allow for rich text input.
   wysiwygEditorOpen = false
-  createWYSIWYGEditor: (value, editorCallback) ->
+  createWYSIWYGEditor: (value, center, editorCallback) ->
     if wysiwygEditorOpen
       return
 
@@ -516,7 +522,6 @@ class Editor
     wysiwygContainer = document.createElement "div"
     wysiwygContainer.id = "wysiwyg-container"
     wysiwygContainer.className = "no-drag"
-    wysiwygContainer.style.display = "none"
     document.querySelector("#content").appendChild wysiwygContainer
 
     # Create and initialze the WYSIWYG editor.
@@ -531,6 +536,9 @@ class Editor
     editor = new Quill('#wysiwyg-editor', options)
     if value
       editor.root.innerHTML = value;
+
+    if center
+      editor.root.style.textAlign = "center"
 
     # Callback to save the value and
     removeContainer = () =>
@@ -602,19 +610,20 @@ class Editor
         return
 
     for field in @editorContent.querySelectorAll ".array-property"
-      @makeRichTextInput(field, (value) -> field.value = value)
+      @makeRichTextInput(field)
       field.addEventListener "change", (event) =>
         property = event.target.getAttribute("data-property")
         @updateArrayProperty(property)
         return
+
     this
 
   # Updates a single property.
   updateProperty: (property) ->
     if property.split("_").length > 1
-      @node.nodeData[property.split("_")[0]][property.split("_")[1]] = event.target.value
+      @node.nodeData[property.split("_")[0]][property.split("_")[1]] = (event.target.value || event.target.innerHTML)
     else
-      @node.nodeData[property] = event.target.value
+      @node.nodeData[property] = (event.target.value || event.target.innerHTML)
     @node.build().addListeners().rerender()
 
     this
@@ -623,8 +632,8 @@ class Editor
   # such as the theorems.
   updateArrayProperty: (property) ->
     new_values = []
-    for entry in @editorContent.querySelectorAll "input[data-property='#{property}']"
-      new_values.push(entry.value)
+    for entry in @editorContent.querySelectorAll "[data-property='#{property}']"
+      new_values.push(entry.innerHTML)
     if property.split("_").length > 1
       @node.nodeData[property.split("_")[0]][property.split("_")[1]] = new_values
     else
@@ -635,11 +644,16 @@ class Editor
 
   # Disables default browser behaviour for this input to instead
   # open up the WYSIWYG editor.
-  makeRichTextInput: (input, callback) ->
+  makeRichTextInput: (input) ->
     input.addEventListener "click", (e) =>
       e.preventDefault()
-      @createWYSIWYGEditor(tagCleanup(input.value), (value) =>
-        callback(tagCleanup(value))
+
+      centerEditor = false
+      if (input.id == "property-messages_open" || input.id == "property-messages_close" || input.classList.contains("feedbackMessage"))
+        centerEditor = true
+
+      @createWYSIWYGEditor(input.innerHTML, centerEditor, (value) =>
+        input.innerHTML = value
         input.dispatchEvent new Event("change"))
       document.querySelector(".ql-editor").focus()
       false
@@ -647,13 +661,12 @@ class Editor
 
   # Creates a simple text-field input.
   textInputCreate: (name, value) ->
-    input = document.createElement "input"
-    input.type = "text"
+    input = document.createElement "div"
     input.id = "property-#{name}"
-    input.className = "property"
+    input.className = "input property"
     input.setAttribute("data-property", name)
-    input.value = value
-    @makeRichTextInput(input, (value) -> input.value = value)
+    input.innerHTML = value
+    @makeRichTextInput(input)
 
     @block.appendChild input
 
@@ -661,12 +674,12 @@ class Editor
 
   # Creates a multiline text-field input.
   multilinetextInputCreate: (name, value) ->
-    input = document.createElement "textarea"
+    input = document.createElement "div"
     input.id = "property-#{name}"
-    input.className = "property"
+    input.className = "textarea property"
     input.setAttribute("data-property", name)
-    input.value = value
-    @makeRichTextInput(input, (value) -> input.value = value)
+    input.innerHTML = value
+    @makeRichTextInput(input)
 
     @block.appendChild input
 
@@ -720,6 +733,75 @@ class Editor
 
     this
 
+  feedbackInputCreate: (name, values) ->
+
+    updateFeedback = () =>
+      newFeedback = {}
+      for feedbackBlock in document.querySelectorAll ".feedbackBlock"
+        percentage = feedbackBlock.querySelector("input[type='number']").value
+        message = feedbackBlock.querySelector(".feedbackMessage").innerHTML
+        newFeedback[percentage] = message
+
+      @node.nodeData.data.feedback = newFeedback
+
+    createFeedbackInput = (percentage, message) =>
+      feedbackBlock = document.createElement "div"
+      feedbackBlock.className = "feedbackBlock"
+
+      feedbackTriggerBlock = document.createElement "div"
+      feedbackTriggerBlock.className = "feedbackTriggerBlock"
+
+      feedbackTriggerInput = document.createElement "input"
+      feedbackTriggerInput.type = "number"
+      feedbackTriggerInput.max = 100
+      feedbackTriggerInput.min = 0
+      if percentage
+        feedbackTriggerInput.value = percentage
+      feedbackTriggerInput.addEventListener "change", () ->
+        updateFeedback()
+      feedbackTriggerBlock.appendChild feedbackTriggerInput
+
+      feedbackTriggerPercentage = document.createElement "div"
+      feedbackTriggerPercentage.className = "percentage"
+      feedbackTriggerPercentage.innerHTML = "%"
+      feedbackTriggerBlock.appendChild feedbackTriggerPercentage
+
+      feedbackBlock.appendChild feedbackTriggerBlock
+
+      feedbackMessage = document.createElement "div"
+      feedbackMessage.className = "feedbackMessage input"
+      feedbackMessage.innerHTML = message
+      feedbackMessage.addEventListener "change", () ->
+        updateFeedback()
+      @makeRichTextInput(feedbackMessage)
+      feedbackBlock.appendChild feedbackMessage
+
+      removeButton = document.createElement "i"
+      removeButton.className = "removeButton far fa-trash-alt"
+      feedbackBlock.appendChild removeButton
+      removeButton.addEventListener "click", (event) =>
+        event.target.parentElement.parentElement.removeChild event.target.parentElement
+        updateFeedback()
+
+      return feedbackBlock
+
+
+    for percentage, message of values
+      @block.appendChild createFeedbackInput(percentage, message)
+
+
+    # Add the 'add'-button.
+    addButton = document.createElement "button"
+    addButton.className = "add-button"
+    addButton.innerHTML = "Toevoegen <i class='fas fa-plus-square'></i>"
+    blockCopy = @block
+    addButton.addEventListener "click", () =>
+      blockCopy.insertBefore createFeedbackInput(false, "Lorem ipsum dolor"), addButton
+
+    @block.appendChild addButton
+
+    this
+
   # Creates multiple text inputs for properties that
   # consist of multiple values, such as the theorems.
   multitextInputCreate: (name, values) ->
@@ -730,11 +812,10 @@ class Editor
       inputBlock = document.createElement "div"
       inputBlock.className = "inputblock"
 
-      input = document.createElement "input"
-      input.type = "text"
-      input.className = "array-property"
+      input = document.createElement "div"
+      input.className = "input array-property"
       input.setAttribute("data-property", name)
-      input.value = value
+      input.innerHTML = value
       inputBlock.appendChild input
 
       removeButton = document.createElement "i"
@@ -750,24 +831,25 @@ class Editor
     addButton = document.createElement "button"
     addButton.className = "add-button"
     addButton.innerHTML = "Toevoegen <i class='fas fa-plus-square'></i>"
+
+    blockCopy = @block
     addButton.addEventListener "click", () =>
       inputBlock = document.createElement "div"
       inputBlock.className = "inputblock"
 
-      input = document.createElement "input"
-      input.type = "text"
-      input.className = "array-property"
+      input = document.createElement "div"
+      input.className = "input array-property"
       input.setAttribute("data-property", name)
-      input.value = ""
+      input.innerHTML = ""
       inputBlock.appendChild input
       input.addEventListener "change", (event) =>
         @updateArrayProperty(name)
+      @makeRichTextInput(input)
 
       removeButton = document.createElement "i"
       removeButton.className = "removeButton far fa-trash-alt"
       inputBlock.appendChild removeButton
-
-      @block.insertBefore inputBlock, addButton
+      blockCopy.insertBefore inputBlock, addButton
       input.focus()
 
     @block.appendChild addButton
@@ -904,19 +986,23 @@ class Editor
         if @node.html.querySelector(".chevron")
           @node.html.querySelector(".chevron").classList.replace "right", "left"
         @node.nodeData.side = "left"
+        @node.nodeData.weight = document.querySelectorAll("#leftbranch .child-item.root-child").length + 1
         @node.targetParent = document.querySelector("#leftbranch")
         document.querySelector("#leftbranch").appendChild @node.html
         leftButton.disabled = true
         rightButton.disabled = false
+        @openInEditor()
 
       rightButton.addEventListener "click", (event) =>
         if @node.html.querySelector(".chevron")
           @node.html.querySelector(".chevron").classList.replace "left", "right"
         @node.nodeData.side = "right"
+        @node.nodeData.weight = document.querySelectorAll("#rightbranch .child-item.root-child").length + 1
         @node.targetParent = document.querySelector("#rightbranch")
         document.querySelector("#rightbranch").appendChild @node.html
         leftButton.disabled = false
         rightButton.disabled = true
+        @openInEditor()
 
     this
 
@@ -946,7 +1032,6 @@ class Editor
     # Bind the eventlistener to the dropdown to change the
     # node type when a different option is selected.
     dropdown.addEventListener "change", (event) =>
-
 
       # Get the relevant properties from the old node.
       targetParent = @node.targetParent
@@ -995,12 +1080,15 @@ class Editor
       @node.build()
       @node.html.id = id
       @node.addListeners().rerender()
+      @openInEditor()
 
       # Add the node back to the parent.
       if isRootNode
         window.fg.mindmap.mindmapData.nodes.push @node.nodeData
       else
         @node.nodeData.parentObject.nodeData.children.push @node.nodeData
+
+
 
     this
 

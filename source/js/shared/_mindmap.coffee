@@ -11,6 +11,8 @@ class Mindmap
     @content = document.getElementById "content"
     @privacyPopup = document.getElementById "privacy-popup"
 
+    @isMovingToCenter = false
+
     # Animating and moving of the mindmap.
     @animation = new Animation(@container)
 
@@ -208,20 +210,6 @@ class Mindmap
       ), 7000
     ), 1000
 
-  # Animates the mindmap moving to its center.
-  moveToCenter: () ->
-
-    rootTargetX = Math.ceil(document.getElementById("content").offsetWidth / 2 - @rootNode.offsetWidth / 2)
-    rootTargetY = Math.ceil(document.getElementById("content").offsetHeight / 2 - @rootNode.offsetHeight  / 2)
-
-    rootCurrentX = Math.ceil(@rootNode.getBoundingClientRect().left)
-    rootCurrentY = Math.ceil(@rootNode.getBoundingClientRect().top)
-
-    moveX = (rootTargetX - rootCurrentX)
-    moveY = (rootTargetY - rootCurrentY)
-
-    @animation.moveRelative(moveX, moveY, 500)
-
   # Displays the privacy popup.
   showPrivacyPopup: () ->
     removePopup = () =>
@@ -241,30 +229,28 @@ class Mindmap
 
     @privacyPopup.querySelector("#accept-button").addEventListener "click", removePopup
 
-  # Displays a semi-transparent, dark overlay over the screen
-  # to emphasize a popup.
-  showOverlay: (callback = false) ->
-    overlay = document.createElement "div"
-    overlay.id = "overlay"
-    overlay.classList.add "fade-in"
-    overlay.addEventListener "click", () =>
-      if callback
-        callback()
-      @removeOverlay()
-    @content.appendChild overlay
+  # Animates the mindmap moving to its center.
+  moveToCenter: () ->
+    @isMovingToCenter = true
 
-  # Removes the overlay from the screen.
-  removeOverlay: () ->
-    overlay = @content.querySelector "#overlay"
-    overlay.classList.remove "fade-in"
-    overlay.classList.add "fade-out"
-    overlay.addEventListener "animationend", () =>
-      if @content.contains overlay
-        @content.removeChild overlay
+    content = document.querySelector("#content")
+    contentW = content.getBoundingClientRect().width
+    contentH = content.getBoundingClientRect().height
+    rootW = @rootNode.getBoundingClientRect().width
+    rootH = @rootNode.getBoundingClientRect().height
+
+    targetX = Math.ceil(contentW - rootW) / 2
+    targetY = Math.ceil(contentH - rootH) / 2
+    rootX = Math.ceil(@rootNode.getBoundingClientRect().left)
+    rootY = Math.ceil(@rootNode.getBoundingClientRect().top)
+
+    @animation.move(rootX, rootY, targetX, targetY, 500, () => @isMovingToCenter = false)
 
   # Resets the state of the mindmap.
   # Keeps the selected study and year.
   reset: () ->
+    if @container.querySelectorAll(".node-expand.active").length == 0
+      @moveToCenter()
 
     # Unchecks all checkboxes, resets the progressbars and collapses
     # the checklist nodes and their subtrees.
@@ -286,8 +272,26 @@ class Mindmap
       resetMessage.innerHTML = @data.studies[@selectedStudy].data.resetMessage
       @updateTextBubbleContent resetMessage
 
-    # Reset the position.
-    @moveToCenter()
+  # Displays a semi-transparent, dark overlay over the screen
+  # to emphasize a popup.
+  showOverlay: (callback = false) ->
+    overlay = document.createElement "div"
+    overlay.id = "overlay"
+    overlay.classList.add "fade-in"
+    overlay.addEventListener "click", () =>
+      if callback
+        callback()
+      @removeOverlay()
+    @content.appendChild overlay
+
+  # Removes the overlay from the screen.
+  removeOverlay: () ->
+    overlay = @content.querySelector "#overlay"
+    overlay.classList.remove "fade-in"
+    overlay.classList.add "fade-out"
+    overlay.addEventListener "animationend", () =>
+      if @content.contains overlay
+        @content.removeChild overlay
 
   # Zooms out the mindmap by 0.25 at a time.
   # Has a minimum zoomfactor of 0.25.

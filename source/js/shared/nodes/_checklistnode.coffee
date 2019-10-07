@@ -81,7 +81,7 @@ class ChecklistNode extends BaseNode
     # checkboxes are checked.
     if checkedCheckboxes >= 2
       expandButton = parent.querySelector ".node-expand"
-      if not expandButton.classList.contains "active"
+      if expandButton && !(expandButton.classList.contains "active")
         expandButton.click()
 
     # Place optional feedback in the textbubble.

@@ -12,7 +12,7 @@ body {
   user-select: none;
 }
 
-input {
+input, .input {
   font-family: $fontfamily;
 }
 
@@ -44,7 +44,10 @@ button {
   position: relative;
 
   select {
+    position: relative;
+    display: inline;
     -webkit-appearance: none;
+    -moz-appearance: none;
     width: 100%;
     border: 1px solid #e7e9ec;
     outline: none;
@@ -59,19 +62,19 @@ button {
   }
 
   &:after {
-    border: 1px solid $basecolor;
-    border-right: 0;
-    border-top: 0;
-    content: " ";
     display: block;
-    height: 5px;
-    width: 5px;
-    pointer-events: none;
     position: absolute;
-    transform: rotate(-45deg);
-    margin-top: -2px;
     right: .75em;
-    top: 40%;
+    top: 4px;
+    width: 8px;
+    height: 8px;
+    content: "";
+    box-sizing: border-box;
+    pointer-events: none;
+    border-bottom: 2px solid $basecolor;
+    border-right: 2px solid $basecolor;
+    transform-origin: center;
+    transform: rotate(45deg);
   }
 }
 

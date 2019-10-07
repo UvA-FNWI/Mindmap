@@ -1,0 +1,11 @@
+# SASS.
+assets/style/*.css
+assets/style/*.css.map
+
+# MacOS.
+.DS_Store
+
+# Apache development server
+.htaccess
+
+dist/data/backups/*

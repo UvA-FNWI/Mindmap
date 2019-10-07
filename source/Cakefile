@@ -1,0 +1,38 @@
+{exec} = require "child_process"
+
+task "sbuild", "Compile all coffeescript-files.", ->
+
+  # Clean previous distribution.
+  exec "rm -rf ../dist/**/*.*", (err, stdout, stderr) ->
+    throw err if err
+    console.log stderr
+
+  # Copy images.
+  exec "cp images/* ../dist/assets/images/", (err, stdout, stderr) ->
+    throw err if err
+    console.log stderr
+
+  # Compile stylesheets.
+  exec "sass css:../dist/assets/css", (err, stdout, stderr) ->
+    throw err if err
+    console.log stderr
+
+  # Compile the index script.
+  exec "cat js/shared/*.coffee js/shared/nodes/*.coffee js/index/base.coffee | coffee -sc > ../dist/assets/js/index.js", (err, stdout, stderr) ->
+    throw err if err
+    console.log stderr
+
+  # Compile the editor script.
+  exec "cat js/shared/*.coffee js/shared/nodes/*.coffee js/editor/*.coffee | coffee -sc > ../dist/assets/js/editor.js", (err, stdout, stderr) ->
+    throw err if err
+    console.log stderr
+
+  # Copy the index, editor and save-script.
+  exec "cp {index,editor,save}.php ../dist/", (err, stdout, stderr) ->
+    throw err if err
+    console.log stderr
+
+  # Copy the default data.
+  exec "cp -r data/ ../dist/data", (err, stdout, stderr) ->
+    throw err if err
+    console.log stderr

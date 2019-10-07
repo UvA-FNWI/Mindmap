@@ -10,7 +10,6 @@ class PanHandler
     @previousMouseX = @previousMouseY = 0
     @content = document.getElementById "content"
     @mindmap = document.getElementById "mindmap"
-    @speed = 1.0
 
   # Starts listening for pan events.
   startListening: () ->
@@ -29,10 +28,10 @@ class PanHandler
       overlay = document.getElementById "overlay"
       if @listening and !recursiveHasClass(event.target, "no-drag") and event.target != overlay  and !isDescendant(event.target, overlay)
         event.preventDefault()
-        @speed = (1.0 / window.fg.mindmap.zoomFactor)
         @dragging = true
         @previousMouseX = event.clientX
         @previousMouseY = event.clientY
+        document.body.style.cursor = "move"
 
   # Binds the mouseup handler so we know when
   # the dragging ends.
@@ -40,6 +39,7 @@ class PanHandler
     @content.addEventListener "mouseup", (event) =>
       @dragging = false
       event.preventDefault()
+      document.body.style.cursor = "default"
 
   # Binds the touchdown handler so we know when
   # the dragging starts.
@@ -47,7 +47,6 @@ class PanHandler
     @content.addEventListener "touchstart", (event) =>
       if @listening and !recursiveHasClass(event.target, "no-drag")
         event.preventDefault()
-        @speed = (1.0 / window.fg.mindmap.zoomFactor)
         @dragging = true
         @previousMouseX = event.targetTouches[0].pageX
         @previousMouseY = event.targetTouches[0].pageY
@@ -81,6 +80,6 @@ class PanHandler
 
   # Uses the new position of the mouse to move the content.
   drag: (currentMouseX, currentMouseY) =>
-    movementX = (currentMouseX - @previousMouseX) * @speed
-    movementY = (currentMouseY - @previousMouseY) * @speed
+    movementX = (currentMouseX - @previousMouseX)
+    movementY = (currentMouseY - @previousMouseY)
     fg.mindmap.animation.moveSingleFrame(movementX, movementY)

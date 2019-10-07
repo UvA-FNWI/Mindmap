@@ -1,12 +1,34 @@
-input {
+.input, input {
+  display: inline-block;
   border: 1px solid #e7e9ec;
+  background-color: white;
   outline: none;
   height: 20px;
   padding: 3px;
+  cursor: text;
+  font-size: 11px !important;
+  overflow: hidden;
+  line-height: 26px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  * {
+    padding: 0;
+    margin: 0;
+  }
 }
 
-textarea {
+.textarea, textarea {
   border: 1px solid #e7e9ec;
   outline: none;
   padding: 3px;
+  cursor: text;
+  font-size: 11px !important;
+  overflow: hidden;
+  min-height: 36px;
+
+  * {
+    padding: 0;
+    margin: 0;
+  }
 }
