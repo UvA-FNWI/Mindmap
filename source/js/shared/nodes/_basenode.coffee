@@ -145,7 +145,7 @@ class BaseNode
       fg.mindmap.animation.moveRelative(moveX, moveY, 500)
 
     # Open the new node.
-    @originalHeight = getOuterHeight target
+    @originalHeight = @originalHeight || getOuterHeight(target)
     activeContentHeight = getOuterHeight target.getElementsByClassName("node-active-content")[0]
     node.style.height = "#{@originalHeight + activeContentHeight}px"
 
@@ -160,7 +160,6 @@ class BaseNode
   deactivateNode: (node) ->
     node.classList.remove "active"
     node.style.height = "#{@originalHeight}px"
-    @originalHeight = 0
 
     # If set, show the close-message.
     if getText(@nodeData.messages.close) and getText(@nodeData.messages.close).length > 0

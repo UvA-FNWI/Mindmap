@@ -798,7 +798,7 @@
           fg.mindmap.animation.moveRelative(moveX, moveY, 500);
         }
         // Open the new node.
-        this.originalHeight = getOuterHeight(target);
+        this.originalHeight = this.originalHeight || getOuterHeight(target);
         activeContentHeight = getOuterHeight(target.getElementsByClassName("node-active-content")[0]);
         node.style.height = `${this.originalHeight + activeContentHeight}px`;
         // If set, show the open-message.
@@ -815,7 +815,6 @@
         var message;
         node.classList.remove("active");
         node.style.height = `${this.originalHeight}px`;
-        this.originalHeight = 0;
         // If set, show the close-message.
         if (getText(this.nodeData.messages.close) && getText(this.nodeData.messages.close).length > 0) {
           message = document.createElement("span");
